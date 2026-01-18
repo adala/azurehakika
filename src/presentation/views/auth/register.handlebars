@@ -1,0 +1,439 @@
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Create Your Account</h4>
+            </div>
+            <div class="card-body p-4">
+                {{#if errors.length}}
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {{#each errors}}
+                        <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/if}}
+
+                <form id="registerForm" action="/auth/register" method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">First Name *</label>
+                                <input type="text" class="form-control {{#if errors.firstName}}is-invalid{{/if}}"
+                                    id="firstName" name="firstName" value="{{formData.firstName}}" required
+                                    minlength="2" maxlength="50">
+                                <div class="invalid-feedback">Please provide a valid first name (2-50 characters).</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="surname" class="form-label">Surname *</label>
+                                <input type="text" class="form-control {{#if errors.surname}}is-invalid{{/if}}"
+                                    id="surname" name="surname" value="{{formData.surname}}" required minlength="2"
+                                    maxlength="50">
+                                <div class="invalid-feedback">Please provide a valid surname (2-50 characters).</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" class="form-control {{#if errors.email}}is-invalid{{/if}}" id="email"
+                            name="email" value="{{formData.email}}" required
+                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+                        <div class="invalid-feedback">Please provide a valid email address.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password *</label>
+                        <input type="password" class="form-control {{#if errors.password}}is-invalid{{/if}}"
+                            id="password" name="password" required minlength="6">
+                        <div class="form-text">Password must be at least 6 characters long and include uppercase,
+                            lowercase, and numbers.</div>
+                        <div class="invalid-feedback">Password must be at least 6 characters long.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                        <input type="password" class="form-control {{#if errors.confirmPassword}}is-invalid{{/if}}"
+                            id="confirmPassword" name="confirmPassword" required>
+                        <div class="invalid-feedback">Passwords do not match.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="companyName" class="form-label">Company/Organization Name *</label>
+                        <input type="text" class="form-control {{#if errors.companyName}}is-invalid{{/if}}"
+                            id="companyName" name="companyName" value="{{formData.companyName}}" required minlength="2"
+                            maxlength="100">
+                        <div class="invalid-feedback">Please provide your company or organization name.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="companyType" class="form-label">Company Type *</label>
+                                <select class="form-select {{#if errors.companyType}}is-invalid{{/if}}" id="companyType"
+                                    name="companyType" required>
+                                    <option value="">Select Company Type</option>
+                                    {{#each companyTypes}}
+                                    <option value="{{this.value}}" {{#if (eq this.value
+                                        ../formData.companyType)}}selected{{/if}}>
+                                        {{this.name}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                                <div class="invalid-feedback">Please select a company type.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="country" class="form-label">Country *</label>
+                                <select class="form-select {{#if errors.country}}is-invalid{{/if}}" id="country"
+                                    name="country" required>
+                                    <option value="">Select Country</option>
+                                    {{#each countries}}
+                                    <option value="{{this.name}}" {{#if (eq this.name
+                                        ../formData.country)}}selected{{/if}}>
+                                        {{this.name}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                                <div class="invalid-feedback">Please select your country.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input {{#if errors.terms}}is-invalid{{/if}}" id="terms"
+                            name="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the <a href="/terms" target="_blank">Terms of Service</a> and
+                            <a href="/privacy" target="_blank">Privacy Policy</a> *
+                        </label>
+                        <div class="invalid-feedback">You must agree to the terms and conditions.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <p>Already have an account? <a href="/auth/login">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const form = document.getElementById('registerForm');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const termsCheckbox = document.getElementById('terms');
+
+        // Real-time password confirmation validation
+        function validatePasswordMatch() {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('Passwords do not match');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        }
+
+        password.addEventListener('input', validatePasswordMatch);
+        confirmPassword.addEventListener('input', validatePasswordMatch);
+
+        // Enhanced password strength validation
+        password.addEventListener('input', function () {
+            const strength = checkPasswordStrength(this.value);
+            updatePasswordStrengthIndicator(strength);
+        });
+
+        // Form submission with enhanced validation
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+
+            // Validate terms agreement
+            if (!termsCheckbox.checked) {
+                showErrorMessage('You must agree to the terms and conditions');
+                termsCheckbox.focus();
+                return;
+            }
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Account...';
+
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json' // Explicitly request JSON
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // First, check if we got a successful response
+                if (!response.ok) {
+                    // If not successful, check content type
+                    const contentType = response.headers.get('content-type');
+
+                    if (contentType && contentType.includes('application/json')) {
+                        // Parse JSON error response
+                        const errorData = await response.json();
+                        throw new Error(parseErrorMessage(errorData));
+                    } else {
+                        // Get HTML error response as text
+                        const errorText = await response.text();
+                        throw new Error(`Server error (${response.status}): ${errorText.substring(0, 100)}`);
+                    }
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Clear any saved form data
+                    localStorage.removeItem('registrationFormData');
+                    // Redirect to welcome page for HTML responses
+                    if (response.headers.get('content-type')?.includes('text/html')) {
+                        window.location.href = '/auth/welcome'; // This will be handled by the controller
+                    } else {
+                        // For API responses, show success and redirect
+                        showSuccessMessage('Registration successful! Redirecting to welcome page...');
+                        setTimeout(() => {
+                            window.location.href = '/auth/welcome';
+                        }, 2000);
+                    }
+                } else {
+                    handleServerErrors(result);
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showErrorMessage(error.message || 'An error occurred. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // Helper function to parse error messages
+        function parseErrorMessage(errorData) {
+            if (!errorData) return 'Unknown error occurred';
+
+            if (typeof errorData === 'string') {
+                return errorData;
+            }
+
+            if (errorData.errors) {
+                if (typeof errorData.errors === 'string') {
+                    return errorData.errors;
+                }
+                if (Array.isArray(errorData.errors)) {
+                    return errorData.errors.join(', ');
+                }
+                if (typeof errorData.errors === 'object') {
+                    return Object.values(errorData.errors).join(', ');
+                }
+            }
+
+            if (errorData.message) {
+                return errorData.message;
+            }
+
+            return 'Registration failed. Please check your information.';
+        }
+
+        // Helper function to handle server-side validation errors
+        function handleServerErrors(result) {
+            // Clear previous error highlights
+            form.querySelectorAll('.is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+
+            // Reset custom validity
+            form.querySelectorAll('input, select').forEach(el => {
+                el.setCustomValidity('');
+            });
+
+            // Show error message
+            const errorMessage = parseErrorMessage(result);
+            showErrorMessage(errorMessage);
+
+            // Highlight specific fields if provided
+            if (result.fields) {
+                Object.keys(result.fields).forEach(fieldName => {
+                    const field = form.querySelector(`[name="${fieldName}"]`);
+                    if (field) {
+                        field.classList.add('is-invalid');
+                        const feedback = field.nextElementSibling;
+                        if (feedback && feedback.classList.contains('invalid-feedback')) {
+                            feedback.textContent = result.fields[fieldName];
+                        }
+                    }
+                });
+            }
+
+            // Also highlight email field if it's a duplicate email error
+            if (result.error && result.error.toLowerCase().includes('email')) {
+                const emailField = form.querySelector('#email');
+                if (emailField) {
+                    emailField.classList.add('is-invalid');
+                    const feedback = emailField.nextElementSibling;
+                    if (feedback && feedback.classList.contains('invalid-feedback')) {
+                        feedback.textContent = 'This email is already registered';
+                    }
+                }
+            }
+
+            form.classList.add('was-validated');
+        }
+
+
+        // Password strength indicator functions remain the same
+        function checkPasswordStrength(password) {
+            let strength = 0;
+
+            if (password.length >= 6) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[!@#$%^&*(),.?":{}|<>]+/)) strength++;
+
+            return strength;
+        }
+
+        function updatePasswordStrengthIndicator(strength) {
+            const indicator = document.getElementById('passwordStrength') || createPasswordStrengthIndicator();
+
+            let message = '';
+            let color = 'danger';
+
+            switch (strength) {
+                case 0:
+                case 1:
+                    message = 'Very Weak';
+                    color = 'danger';
+                    break;
+                case 2:
+                    message = 'Weak';
+                    color = 'warning';
+                    break;
+                case 3:
+                    message = 'Good';
+                    color = 'info';
+                    break;
+                case 4:
+                    message = 'Strong';
+                    color = 'success';
+                    break;
+                case 5:
+                    message = 'Very Strong';
+                    color = 'success';
+                    break;
+            }
+
+            indicator.innerHTML = `
+            <div class="progress mb-1" style="height: 5px;">
+                <div class="progress-bar bg-${color}" style="width: ${(strength / 5) * 100}%"></div>
+            </div>
+            <small class="text-${color}">Password Strength: ${message}</small>
+        `;
+        }
+
+        function createPasswordStrengthIndicator() {
+            const group = password.parentElement;
+            const indicator = document.createElement('div');
+            indicator.id = 'passwordStrength';
+            indicator.className = 'mt-1';
+            group.appendChild(indicator);
+            return indicator;
+        }
+
+        function showSuccessMessage(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show';
+            alert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+            form.parentNode.insertBefore(alert, form);
+        }
+
+        function showErrorMessage(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show';
+            alert.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+            form.parentNode.insertBefore(alert, form);
+        }
+
+        // Auto-save form data to localStorage
+        const formFields = form.querySelectorAll('input, select');
+        formFields.forEach(field => {
+            field.addEventListener('change', function () {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+                localStorage.setItem('registrationFormData', JSON.stringify(data));
+            });
+        });
+
+        // Load saved form data
+        // const savedData = localStorage.getItem('registrationFormData');
+        // if (savedData) {
+        //   const data = JSON.parse(savedData);
+        // Object.keys(data).forEach(key = {
+        //   const field = form.querySelector(`[name="${key}"]`);
+        // if (field) {
+        //   field.value = data[key];
+        // if (field.type === 'checkbox') {
+        //   field.checked = data[key] === 'on';
+        // }
+        // }
+        // });
+        //}
+    });
+</script>
+
+<style>
+    .password-strength {
+        transition: all 0.3s ease;
+    }
+
+    .was-validated .form-control:invalid,
+    .was-validated .form-select:invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6.4.4.4-.4'/%3e%3cpath d='M6 7v1'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .was-validated .form-control:valid,
+    .was-validated .form-select:valid {
+        border-color: #198754;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+</style>

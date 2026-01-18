@@ -1,0 +1,295 @@
+<div class="transactions-page">
+    <div class="page-header">
+        <h1>Transaction History</h1>
+        <p class="text-muted">View all your financial transactions and spending history</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Quick Stats</h6>
+                </div>
+                <div class="card-body">
+                    <div id="transactionStats">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Filters</h6>
+                </div>
+                <div class="card-body">
+                    <form id="filterForm">
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" name="type">
+                                <option value="">All Types</option>
+                                <option value="topup">Top-ups</option>
+                                <option value="verification_fee">Verification Fees</option>
+                                <option value="refund">Refunds</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status">
+                                <option value="">All Status</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">All Transactions</h5>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary btn-sm" onclick="exportTransactions()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="transactionsList">
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadTransactionStats();
+        loadTransactions();
+
+        document.getElementById('filterForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            loadTransactions();
+        });
+    });
+
+    async function loadTransactionStats() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/transactions/stats/overview', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                displayTransactionStats(result.data);
+            }
+        } catch (error) {
+            console.error('Error loading transaction stats:', error);
+        }
+    }
+
+    function displayTransactionStats(stats) {
+        const statsHtml = `
+        <div class="stat-item mb-3">
+            <small class="text-muted">Total Transactions</small>
+            <div class="h5 mb-0">${stats.totalTransactions}</div>
+        </div>
+        <div class="stat-item mb-3">
+            <small class="text-muted">Total Top-ups</small>
+            <div class="h5 mb-0 text-success">$${stats.totalTopups.toFixed(2)}</div>
+        </div>
+        <div class="stat-item mb-3">
+            <small class="text-muted">Total Spent</small>
+            <div class="h5 mb-0 text-danger">$${stats.totalSpent.toFixed(2)}</div>
+        </div>
+        <div class="stat-item">
+            <small class="text-muted">Current Balance</small>
+            <div class="h5 mb-0 text-primary">$${stats.currentBalance.toFixed(2)}</div>
+        </div>
+    `;
+
+        document.getElementById('transactionStats').innerHTML = statsHtml;
+    }
+
+    async function loadTransactions() {
+        try {
+            const token = localStorage.getItem('token');
+            const formData = new FormData(document.getElementById('filterForm'));
+            const params = new URLSearchParams(formData);
+
+            const response = await fetch(`/api/transactions?${params}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                displayTransactions(result.data);
+            }
+        } catch (error) {
+            console.error('Error loading transactions:', error);
+        }
+    }
+
+    function displayTransactions(transactions) {
+        if (transactions.length === 0) {
+            document.getElementById('transactionsList').innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No transactions found.</p>
+            </div>
+        `;
+            return;
+        }
+
+        const transactionsHtml = transactions.map(transaction => `
+        <div class="transaction-item d-flex justify-content-between align-items-center py-3 border-bottom">
+            <div class="d-flex align-items-center">
+                <div class="transaction-icon me-3 ${getTransactionIconClass(transaction.type)}">
+                    <i class="fas ${getTransactionIcon(transaction.type)}"></i>
+                </div>
+                <div>
+                    <h6 class="mb-1">${transaction.description}</h6>
+                    <small class="text-muted">
+                        ${transaction.reference} • ${new Date(transaction.createdAt).toLocaleDateString()}
+                    </small>
+                    ${transaction.failureReason ? `
+                        <div class="mt-1">
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-circle"></i> ${transaction.failureReason}
+                            </small>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+            <div class="text-end">
+                <div class="transaction-amount ${transaction.amountType}">
+                    ${transaction.formattedAmount}
+                </div>
+                <span class="badge bg-${getStatusBadgeClass(transaction.status)}">
+                    ${transaction.status}
+                </span>
+            </div>
+        </div>
+    `).join('');
+
+        document.getElementById('transactionsList').innerHTML = transactionsHtml;
+    }
+
+    function getTransactionIcon(type) {
+        const icons = {
+            'topup': 'fa-plus-circle',
+            'verification_fee': 'fa-file-invoice-dollar',
+            'refund': 'fa-undo',
+            'withdrawal': 'fa-money-bill-wave'
+        };
+        return icons[type] || 'fa-receipt';
+    }
+
+    function getTransactionIconClass(type) {
+        const classes = {
+            'topup': 'text-success',
+            'verification_fee': 'text-danger',
+            'refund': 'text-warning',
+            'withdrawal': 'text-info'
+        };
+        return classes[type] || 'text-secondary';
+    }
+
+    function getStatusBadgeClass(status) {
+        const classes = {
+            'completed': 'success',
+            'pending': 'warning',
+            'failed': 'danger',
+            'cancelled': 'secondary'
+        };
+        return classes[status] || 'secondary';
+    }
+
+    async function exportTransactions() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/transactions?limit=1000', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Simple CSV export
+                const csv = convertToCSV(result.data);
+                downloadCSV(csv, 'transactions.csv');
+            }
+        } catch (error) {
+            console.error('Error exporting transactions:', error);
+        }
+    }
+
+    function convertToCSV(transactions) {
+        const headers = ['Date', 'Description', 'Reference', 'Type', 'Amount', 'Status'];
+        const rows = transactions.map(t => [
+            new Date(t.createdAt).toLocaleDateString(),
+            t.description,
+            t.reference,
+            t.type,
+            t.formattedAmount,
+            t.status
+        ]);
+
+        return [headers, ...rows].map(row => row.join(',')).join('\n');
+    }
+
+    function downloadCSV(csv, filename) {
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+</script>
+
+<style>
+    .transaction-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+    }
+
+    .transaction-amount.credit {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .transaction-amount.debit {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .transaction-item:hover {
+        background: #f8f9fa;
+        border-radius: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+</style>

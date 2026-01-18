@@ -1,0 +1,87 @@
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="300" cy="200" r="180" fill="url(#gradient1)" opacity="0.1"/>
+    
+    <!-- Main Certificate -->
+    <g transform="translate(200, 120)">
+        <!-- Certificate Paper -->
+        <rect x="0" y="0" width="200" height="140" rx="8" fill="white" stroke="#667eea" stroke-width="2"/>
+        
+        <!-- Certificate Border -->
+        <rect x="5" y="5" width="190" height="130" rx="4" fill="none" stroke="#667eea" stroke-width="1" stroke-dasharray="4 2"/>
+        
+        <!-- Certificate Header -->
+        <rect x="10" y="10" width="180" height="25" rx="2" fill="#667eea" opacity="0.8"/>
+        <text x="100" y="25" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">CERTIFICATE OF ACHIEVEMENT</text>
+        
+        <!-- University Seal -->
+        <circle cx="100" cy="70" r="20" fill="none" stroke="#e74c3c" stroke-width="2"/>
+        <circle cx="100" cy="70" r="15" fill="none" stroke="#e74c3c" stroke-width="1" stroke-dasharray="2 2"/>
+        <text x="100" y="72" text-anchor="middle" fill="#e74c3c" font-family="Arial, sans-serif" font-size="8" font-weight="bold">UNIVERSITY</text>
+        
+        <!-- Graduate Name -->
+        <text x="100" y="100" text-anchor="middle" fill="#2c3e50" font-family="Arial, sans-serif" font-size="14" font-weight="bold">John Doe</text>
+        
+        <!-- Degree Text -->
+        <text x="100" y="115" text-anchor="middle" fill="#7f8c8d" font-family="Arial, sans-serif" font-size="10">Bachelor of Science in Computer Science</text>
+        
+        <!-- Date -->
+        <text x="100" y="130" text-anchor="middle" fill="#95a5a6" font-family="Arial, sans-serif" font-size="9">June 2023</text>
+    </g>
+    
+    <!-- AI Verification Badge -->
+    <g transform="translate(350, 80)">
+        <!-- Badge Circle -->
+        <circle cx="0" cy="0" r="25" fill="#27ae60" opacity="0.9"/>
+        <circle cx="0" cy="0" r="22" fill="white"/>
+        
+        <!-- AI Icon -->
+        <path d="M-8,-5 L8,-5 L8,5 L-8,5 Z" fill="#27ae60" opacity="0.8"/>
+        <circle cx="-4" cy="0" r="2" fill="white"/>
+        <circle cx="4" cy="0" r="2" fill="white"/>
+        <path d="M-6,3 L6,3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Verification Checkmark -->
+    <g transform="translate(380, 60)">
+        <circle cx="0" cy="0" r="12" fill="#27ae60"/>
+        <path d="M-4,2 L0,6 L8,-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+    
+    <!-- Floating Elements -->
+    <g transform="translate(100, 80)">
+        <!-- Document Icon -->
+        <rect x="0" y="0" width="40" height="50" rx="4" fill="#3498db" opacity="0.7"/>
+        <rect x="5" y="5" width="30" height="8" rx="2" fill="white" opacity="0.8"/>
+        <rect x="5" y="18" width="25" height="4" rx="1" fill="white" opacity="0.6"/>
+        <rect x="5" y="26" width="20" height="4" rx="1" fill="white" opacity="0.6"/>
+        <rect x="5" y="34" width="28" height="4" rx="1" fill="white" opacity="0.6"/>
+    </g>
+    
+    <g transform="translate(450, 280)">
+        <!-- Shield Icon -->
+        <path d="M0,20 L15,0 L30,20 L30,35 C30,40 15,45 15,45 C15,45 0,40 0,35 Z" fill="#e74c3c" opacity="0.7"/>
+        <path d="M15,25 L20,30 L25,25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+    
+    <g transform="translate(80, 300)">
+        <!-- Graph Icon -->
+        <rect x="0" y="15" width="8" height="20" rx="2" fill="#9b59b6" opacity="0.7"/>
+        <rect x="12" y="5" width="8" height="30" rx="2" fill="#9b59b6" opacity="0.7"/>
+        <rect x="24" y="10" width="8" height="25" rx="2" fill="#9b59b6" opacity="0.7"/>
+        <rect x="36" y="0" width="8" height="35" rx="2" fill="#9b59b6" opacity="0.7"/>
+        <path d="M4,15 L16,5 L28,10 L40,0" stroke="#9b59b6" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </g>
+    
+    <!-- Connection Lines -->
+    <path d="M250,180 L320,180 L320,120" stroke="#667eea" stroke-width="2" stroke-dasharray="4 2" fill="none" opacity="0.5"/>
+    <path d="M400,180 L320,180 L320,240" stroke="#27ae60" stroke-width="2" stroke-dasharray="4 2" fill="none" opacity="0.5"/>
+    
+    <!-- Gradients -->
+    <defs>
+        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#667eea"/>
+            <stop offset="100%" stop-color="#764ba2"/>
+        </linearGradient>
+    </defs>
+</svg>

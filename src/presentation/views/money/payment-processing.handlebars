@@ -1,0 +1,123 @@
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <!-- Animated Spinner -->
+                    <div class="spinner-border text-primary mb-4" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Processing...</span>
+                    </div>
+                    
+                    <h4 class="card-title mb-3">Processing Your Payment</h4>
+                    
+                    {{#if (eq method 'momo')}}
+                    <div class="alert alert-info">
+                        <i class="fas fa-mobile-alt me-2"></i>
+                        <strong>Check your phone!</strong><br>
+                        A payment request has been sent to your mobile device.
+                    </div>
+                    <p class="text-muted">
+                        Please check your phone and approve the payment to continue.
+                    </p>
+                    {{else}}
+                    <div class="alert alert-info">
+                        <i class="fas fa-credit-card me-2"></i>
+                        <strong>Processing card payment</strong><br>
+                        Please wait while we process your payment.
+                    </div>
+                    <p class="text-muted">
+                        This may take a few moments...
+                    </p>
+                    {{/if}}
+                    
+                    <div class="progress mb-3">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 75%"></div>
+                    </div>
+                    
+                    <div id="paymentDetails" class="small text-muted mb-4">
+                        <div>Reference: <strong>{{reference}}</strong></div>
+                        <div>Method: <strong>{{method}}</strong></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="checkPaymentStatus()">
+                            <i class="fas fa-sync me-2"></i>Check Status
+                        </button>
+                        <a href="/dashboard/wallet" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const paymentReference = new URLSearchParams(window.location.search).get('reference');
+const paymentMethod = new URLSearchParams(window.location.search).get('method');
+
+// Start checking payment status immediately
+document.addEventListener('DOMContentLoaded', function() {
+    checkPaymentStatus();
+    
+    // Check every 5 seconds
+    setInterval(checkPaymentStatus, 5000);
+});
+
+async function checkPaymentStatus() {
+    try {
+        const response = await fetch(`/api/payment/status/${paymentReference}`, {
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken()
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to check status');
+        }
+        
+        if (result.success) {
+            const status = result.data.status;
+            
+            switch(status) {
+                case 'completed':
+                    // Payment successful
+                    window.location.href = `/dashboard/payment/status?status=success&message=Payment completed successfully&reference=${paymentReference}`;
+                    break;
+                    
+                case 'failed':
+                    // Payment failed
+                    window.location.href = `/dashboard/payment/status?status=failed&message=Payment failed&reference=${paymentReference}`;
+                    break;
+                    
+                case 'pending_pin':
+                    // Redirect to PIN page
+                    window.location.href = `/dashboard/payment/pin?reference=${paymentReference}&method=${paymentMethod}`;
+                    break;
+                    
+                case 'pending_3ds':
+                    // Handle 3DS redirect
+                    handle3DSRedirect(result.data.redirectUrl);
+                    break;
+                    
+                // For 'pending' status, just continue waiting
+            }
+        } else {
+            console.error('Payment status check failed:', result.message);
+        }
+        
+    } catch (error) {
+        console.error('Error checking payment status:', error);
+    }
+}
+
+function handle3DSRedirect(redirectUrl) {
+    // Redirect to 3DS authentication page
+    window.location.href = redirectUrl;
+}
+</script>

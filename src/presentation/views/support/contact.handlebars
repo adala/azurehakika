@@ -1,0 +1,279 @@
+<div class="contact-page">
+    <!-- Hero Section -->
+    <section class="hero-section bg-primary text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-4">Get In Touch</h1>
+                    <p class="lead mb-4">
+                        Have questions about our verification services? We're here to help.
+                        Reach out to our team and we'll get back to you promptly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form & Info -->
+    <section class="contact-content py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Contact Form -->
+                <div class="col-lg-8 mb-5">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h3 class="h4 mb-0">Send us a Message</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="contactForm" action="/contact" method="POST">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="firstName" class="form-label">First Name *</label>
+                                            <input type="text" class="form-control" id="firstName" name="firstName"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="lastName" class="form-label">Last Name *</label>
+                                            <input type="text" class="form-control" id="lastName" name="lastName"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email Address *</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" id="phone" name="phone">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="company" class="form-label">Company/Organization</label>
+                                    <input type="text" class="form-control" id="company" name="company">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">Subject *</label>
+                                    <select class="form-select" id="subject" name="subject" required>
+                                        <option value="">Select a subject</option>
+                                        <option value="general">General Inquiry</option>
+                                        <option value="sales">Sales Question</option>
+                                        <option value="support">Technical Support</option>
+                                        <option value="billing">Billing Issue</option>
+                                        <option value="partnership">Partnership Opportunity</option>
+                                        <option value="institution">Add New Institution</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message *</label>
+                                    <textarea class="form-control" id="message" name="message" rows="6"
+                                        required></textarea>
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="newsletter" name="newsletter">
+                                    <label class="form-check-label" for="newsletter">
+                                        Send me product updates and news about AcademicVerify
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h3 class="h4 mb-0">Contact Information</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="contact-info">
+                                <div class="contact-item d-flex mb-4">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-envelope fa-2x text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="h6 mb-1">Email</h5>
+                                        <p class="mb-0">support@academicverify.com</p>
+                                        <small class="text-muted">We'll respond within 24 hours</small>
+                                    </div>
+                                </div>
+
+                                <div class="contact-item d-flex mb-4">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-phone fa-2x text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="h6 mb-1">Phone</h5>
+                                        <p class="mb-0">+1 (555) 123-4567</p>
+                                        <small class="text-muted">Mon-Fri, 9AM-6PM EST</small>
+                                    </div>
+                                </div>
+
+                                <div class="contact-item d-flex mb-4">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-map-marker-alt fa-2x text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="h6 mb-1">Office</h5>
+                                        <p class="mb-0">
+                                            123 Business District<br>
+                                            New York, NY 10001<br>
+                                            United States
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="contact-item d-flex">
+                                    <div class="contact-icon me-3">
+                                        <i class="fas fa-clock fa-2x text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="h6 mb-1">Business Hours</h5>
+                                        <p class="mb-0">
+                                            Monday - Friday: 9:00 AM - 6:00 PM<br>
+                                            Saturday: 10:00 AM - 2:00 PM<br>
+                                            Sunday: Closed
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="social-links">
+                                <h5 class="h6 mb-3">Follow Us</h5>
+                                <div class="d-flex gap-3">
+                                    <a href="#" class="text-primary">
+                                        <i class="fab fa-twitter fa-2x"></i>
+                                    </a>
+                                    <a href="#" class="text-primary">
+                                        <i class="fab fa-linkedin fa-2x"></i>
+                                    </a>
+                                    <a href="#" class="text-primary">
+                                        <i class="fab fa-facebook fa-2x"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support Card -->
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                            <h5 class="h6">Need Immediate Help?</h5>
+                            <p class="small text-muted mb-3">
+                                Check our knowledge base for quick answers to common questions.
+                            </p>
+                            <a href="/help" class="btn btn-outline-primary btn-sm">Visit Help Center</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .contact-item {
+        transition: transform 0.2s ease;
+    }
+
+    .contact-item:hover {
+        transform: translateX(5px);
+    }
+
+    .social-links a {
+        transition: transform 0.2s ease;
+    }
+
+    .social-links a:hover {
+        transform: scale(1.2);
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const contactForm = document.getElementById('contactForm');
+
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            // Simulate form submission
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+
+            setTimeout(() => {
+                // In a real application, you would send the form data to your server
+                // For now, we'll just redirect to the success page
+                window.location.href = '/contact-success';
+            }, 2000);
+        });
+
+        // Auto-save form data
+        const formFields = contactForm.querySelectorAll('input, select, textarea');
+        formFields.forEach(field => {
+            field.addEventListener('change', function () {
+                const formData = new FormData(contactForm);
+                const data = Object.fromEntries(formData);
+                localStorage.setItem('contactFormData', JSON.stringify(data));
+            });
+        });
+
+        // Load saved form data
+        const savedData = localStorage.getItem('contactFormData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            Object.keys(data).forEach(key => {
+                const field = contactForm.querySelector(`[name="${key}"]`);
+                if (field) {
+                    field.value = data[key];
+                    if (field.type === 'checkbox') {
+                        field.checked = data[key] === 'on';
+                    }
+                }
+            });
+        }
+    });
+</script>

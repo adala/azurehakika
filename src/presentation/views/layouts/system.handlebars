@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --admin-color: #2c3e50;
+            --supervisor-color: #3498db;
+            --worker-color: #27ae60;
+        }
+
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+        }
+
+        .sidebar .nav-link {
+            color: #333;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+
+        .content-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-role-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .role-admin {
+            background-color: var(--admin-color);
+            color: white;
+        }
+
+        .role-supervisor {
+            background-color: var(--supervisor-color);
+            color: white;
+        }
+
+        .role-worker {
+            background-color: var(--worker-color);
+            color: white;
+        }
+
+        /* Role-based header colors */
+        .header-admin {
+            background-color: var(--admin-color) !important;
+        }
+
+        .header-supervisor {
+            background-color: var(--supervisor-color) !important;
+        }
+
+        .header-worker {
+            background-color: var(--worker-color) !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark header-{{user.role}}">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/system/dashboard">
+                <i class="fas fa-graduation-cap me-2"></i>
+                {{__ "app.name"}} - 
+                <span class="text-capitalize">{{user.role}}</span>
+                <span class="user-role-badge ms-2 role-{{user.role}}">{{user.role}}</span>
+            </a>
+
+            {{#if user}}
+            <div class="d-flex align-items-center">
+                <!-- Notifications -->
+                <div class="dropdown me-3">
+                    <button class="btn btn-outline-light btn-sm position-relative" type="button"
+                            data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        {{#if notificationsCount}}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{notificationsCount}}
+                        </span>
+                        {{/if}}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        {{#if notifications}}
+                            {{#each notifications}}
+                            <li><a class="dropdown-item" href="{{this.link}}">{{this.message}}</a></li>
+                            {{/each}}
+                        {{else}}
+                            <li><span class="dropdown-item-text text-muted">No new notifications</span></li>
+                        {{/if}}
+                    </ul>
+                </div>
+
+                <!-- User Menu -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-2"></i>
+                        {{user.firstName}}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <strong>{{user.firstName}} {{user.lastName}}</strong>
+                                <br>
+                                <small class="text-muted">{{user.email}}</small>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/system/profile">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a>
+                        </li>
+                        {{#if user.mustChangePassword}}
+                        <li>
+                            <a class="dropdown-item text-warning" href="/system/change-password">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Change Password
+                            </a>
+                        </li>
+                        {{/if}}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/system/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {{#if user}}
+            <div class="col-md-3 col-lg-2 sidebar">
+                <nav class="nav flex-column py-3">
+                    <!-- Dashboard -->
+                    <a class="nav-link {{#if (eq activePage 'dashboard')}}active{{/if}}" 
+                       href="/system/dashboard">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+
+                    <!-- Role-Specific Links -->
+                    {{#if (eq user.role 'admin')}}
+                        <!-- Admin Links -->
+                        <div class="sidebar-section mt-2">
+                            <small class="text-uppercase text-muted fw-bold ps-3">System Management</small>
+                            <a class="nav-link {{#if (eq activePage 'users')}}active{{/if}}" 
+                               href="/system/users">
+                                <i class="fas fa-users me-2"></i>Manage Users
+                            </a>
+                            <a class="nav-link {{#if (eq activePage 'institutions')}}active{{/if}}" 
+                               href="/admin/institution">
+                                <i class="fas fa-university me-2"></i>Institutions
+                            </a>
+                            <a class="nav-link {{#if (eq activePage 'configuration')}}active{{/if}}" 
+                               href="/admin/configuration">
+                                <i class="fas fa-cogs me-2"></i>System Configuration
+                            </a>
+                        </div>
+                    {{/if}}
+
+                    {{#if (or (eq user.role 'admin') (eq user.role 'supervisor'))}}
+                        <!-- Supervisor & Admin Links -->
+                        <div class="sidebar-section mt-2">
+                            <small class="text-uppercase text-muted fw-bold ps-3">Task Management</small>
+                            <a class="nav-link {{#if (eq activePage 'assignments')}}active{{/if}}" 
+                               href="/system/assignments">
+                                <i class="fas fa-tasks me-2"></i>Assign Tasks
+                            </a>
+                            <a class="nav-link {{#if (eq activePage 'monitoring')}}active{{/if}}" 
+                               href="/system/monitoring">
+                                <i class="fas fa-eye me-2"></i>Monitor Progress
+                            </a>
+                        </div>
+                    {{/if}}
+
+                    {{#if (eq user.role 'worker')}}
+                        <!-- Worker Links -->
+                        <div class="sidebar-section mt-2">
+                            <small class="text-uppercase text-muted fw-bold ps-3">My Work</small>
+                            <a class="nav-link {{#if (eq activePage 'my-tasks')}}active{{/if}}" 
+                               href="/system/my-tasks">
+                                <i class="fas fa-clipboard-list me-2"></i>My Tasks
+                            </a>
+                            <a class="nav-link {{#if (eq activePage 'completed')}}active{{/if}}" 
+                               href="/system/completed-tasks">
+                                <i class="fas fa-check-circle me-2"></i>Completed
+                            </a>
+                        </div>
+                    {{/if}}
+
+                    <!-- Common Links -->
+                    <div class="sidebar-section mt-2">
+                        <small class="text-uppercase text-muted fw-bold ps-3">Resources</small>
+                        <a class="nav-link {{#if (eq activePage 'reports')}}active{{/if}}" 
+                           href="/system/reports">
+                            <i class="fas fa-chart-bar me-2"></i>Reports
+                        </a>
+                        <a class="nav-link {{#if (eq activePage 'help')}}active{{/if}}" 
+                           href="/system/help">
+                            <i class="fas fa-question-circle me-2"></i>Help & Support
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            {{/if}}
+
+            <!-- Main Content -->
+            <div class="{{#if user}}col-md-9 col-lg-10{{else}}col-12{{/if}}">
+                <div class="p-4">
+                    <!-- Breadcrumb -->
+                    {{#if breadcrumbs}}
+                    <nav aria-label="breadcrumb" class="mb-3">
+                        <ol class="breadcrumb">
+                            {{#each breadcrumbs}}
+                                {{#if @last}}
+                                    <li class="breadcrumb-item active">{{this.name}}</li>
+                                {{else}}
+                                    <li class="breadcrumb-item"><a href="{{this.url}}">{{this.name}}</a></li>
+                                {{/if}}
+                            {{/each}}
+                        </ol>
+                    </nav>
+                    {{/if}}
+
+                    <!-- Page Header -->
+                    {{#if showPageHeader}}
+                    <div class="content-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h1 class="h3 mb-2">{{pageTitle}}</h1>
+                                {{#if pageSubtitle}}
+                                <p class="text-muted mb-0">{{pageSubtitle}}</p>
+                                {{/if}}
+                            </div>
+                            {{#if pageActions}}
+                            <div class="d-flex gap-2">
+                                {{#each pageActions}}
+                                <a href="{{this.url}}" class="btn {{this.class}}">
+                                    <i class="{{this.icon}} me-2"></i>{{this.label}}
+                                </a>
+                                {{/each}}
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    <!-- Main Content -->
+                    {{{body}}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="successToastMessage"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script>
+        // Toast helper function
+        function showToast(type, message, delay = 3000) {
+            const toastId = type === 'success' ? 'successToast' : 'errorToast';
+            const toastEl = document.getElementById(toastId);
+            
+            if (toastEl) {
+                const toastBody = document.getElementById(toastId + 'Message');
+                toastBody.textContent = message;
+                
+                const toast = new bootstrap.Toast(toastEl, {
+                    delay: delay,
+                    animation: true
+                });
+                toast.show();
+            }
+        }
+
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+
+</html>

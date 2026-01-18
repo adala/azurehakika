@@ -1,0 +1,95 @@
+{
+  "app": {
+    "name": "Hakika",
+    "ai": "Alimentado por IA",
+    "tagline": "Plataforma de Verificação Acadêmica",
+    "welcome": "Bem-vindo ao Hakika",
+    "intro": "Verifique credenciais académicas instantaneamente com nossa tecnologia avançada de IA. Confiável por instituições de ensino e empregadores em todo o mundo.",
+    "get_started": "Começar Agora",
+    "free": "Grátis",
+    "steps": "Processo simples de quatro etapas para verificar qualquer certificado académico",
+    "how_it_works": "Como Funciona",
+    "why_choose": "Por Que Escolher",
+    "trusted": "Confiável por Instituições Líderes",
+    "verify": "Verificamos certificados de universidades em toda a África.",
+    "universities": "Universidades",
+    "colleges": "Faculdades",
+    "employers": "Empregadores",
+    "government": "Governo",
+    "privacy": "Política de Privacidade",
+    "contact": "Contacto",
+    "about": "Sobre",
+    "ready": "Pronto para Simplificar o Seu Processo de Verificação?",
+    "join": "Junte-se a milhares de organizações que usam <strong> Hakika </strong> para verificação rápida e precisa de certificados",
+    "all_rights_reserved": "Todos os direitos reservados.",
+    "remember_me": "Lembre de mim"
+  },
+  "nav": {
+    "dashboard": "Painel de Controlo",
+    "verifications": "Verificações",
+    "team": "Gestão de Equipa",
+    "wallet": "Carteira",
+    "settings": "Configurações",
+    "logout": "Sair"
+  },
+  "auth": {
+    "login": "Entrar",
+    "register": "Registar",
+    "email": "Endereço de Email",
+    "password": "Palavra-passe",
+    "forgot_password": "Esqueceu a palavra-passe?",
+    "no_account": "Não tem uma conta?",
+    "has_account": "Já tem uma conta?",
+    "remember_me": "Lembrar-me",
+    "phone": "Telefone"
+  },
+  "team": {
+    "title": "Gestão de Equipa",
+    "invite_member": "Convidar Membro da Equipa",
+    "members": "Membros da Equipa",
+    "email": "Endereço de Email",
+    "role": "Função",
+    "permissions": "Permissões",
+    "send_invitation": "Enviar Convite",
+    "cancel": "Cancelar",
+    "status": "Estado",
+    "actions": "Ações",
+    "active": "Ativo",
+    "pending": "Pendente",
+    "verifier": "Verificador",
+    "manager": "Gerente",
+    "analyst": "Analista",
+    "viewer": "Visualizador"
+  },
+  "wallet": {
+    "title": "Carteira",
+    "balance": "Saldo Atual",
+    "add_funds": "Adicionar Fundos",
+    "transactions": "Transações Recentes"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "loading": "A carregar...",
+    "success": "Sucesso",
+    "error": "Erro",
+    "sign_in": "Entrar",
+    "sign_into_your_account": "Entre na sua conta",
+    "quick_link": "Links rápidos",
+    "book_demo": ""
+  },
+
+  "footer": {
+    "services": "Serviços",
+    "support": "Suporte",
+    "company": "Empresa",
+    "legal": "Legal",
+    "contact_info": "Informações de Contacto",
+    "stay_updated": "Mantenha-se Actualizado",
+    "newsletter_placeholder": "O seu endereço de email",
+    "operating_hours": "Seg-Sex: 8h-18h GMT"
+  }
+}

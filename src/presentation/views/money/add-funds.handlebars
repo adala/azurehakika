@@ -1,0 +1,374 @@
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="d-flex align-items-center mb-4">
+                <a href="/dashboard" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>Add Funds
+                </h1>
+            </div>
+
+            <!-- Current Balance -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-muted">Current Balance</h5>
+                    <h2 class="text-primary" id="currentBalance">Loading...</h2>
+                </div>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Select Payment Method</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Payment Method Tabs -->
+                    <ul class="nav nav-pills mb-4" id="paymentMethodTabs" role="tablist">
+                        {{#if country}}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="momo-tab" data-bs-toggle="pill" 
+                                    data-bs-target="#momo" type="button" role="tab">
+                                <i class="fas fa-mobile-alt me-2"></i>Mobile Money
+                            </button>
+                        </li>
+                        {{/if}}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="card-tab" data-bs-toggle="pill" 
+                                    data-bs-target="#card" type="button" role="tab">
+                                <i class="fas fa-credit-card me-2"></i>Credit/Debit Card
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="paymentMethodContent">
+                        <!-- Mobile Money Tab -->
+                        {{#if country}}
+                        <div class="tab-pane fade show active" id="momo" role="tabpanel">
+                            <form id="momoForm">
+                                <div class="mb-3">
+                                    <label for="momoAmount" class="form-label">Amount (USD)</label>
+                                    <input type="number" class="form-control" id="momoAmount" 
+                                           min="1" step="0.01" placeholder="Enter amount" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="momoProvider" class="form-label">Mobile Money Provider</label>
+                                    <select class="form-select" id="momoProvider" required>
+                                        <option value="">Select provider</option>
+                                        <option value="mtn">MTN Mobile Money</option>
+                                        <option value="airtel">Airtel Money</option>
+                                        <option value="orange">Orange Money</option>
+                                        <option value="vodafone">Vodafone Cash</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="momoPhone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="momoPhone" 
+                                           placeholder="e.g., +233XXXXXXXXX" required>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <small>
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        You will receive a payment prompt on your mobile device to complete the transaction.
+                                    </small>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary w-100" id="payWithMomoBtn">
+                                    <i class="fas fa-mobile-alt me-2"></i>
+                                    Pay with Mobile Money
+                                </button>
+                            </form>
+                        </div>
+                        {{/if}}
+                        <!-- Credit Card Tab -->
+                        <div class="tab-pane fade" id="card" role="tabpanel">
+                            <form id="cardForm">
+                                <div class="mb-3">
+                                    <label for="cardAmount" class="form-label">Amount (USD)</label>
+                                    <input type="number" class="form-control" id="cardAmount" 
+                                           min="1" step="0.01" placeholder="Enter amount" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="cardNumber" class="form-label">Card Number</label>
+                                    <input type="text" class="form-control" id="cardNumber" 
+                                           placeholder="1234 5678 9012 3456" maxlength="19" required>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cardExpiry" class="form-label">Expiry Date</label>
+                                        <input type="text" class="form-control" id="cardExpiry" 
+                                               placeholder="MM/YY" maxlength="5" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="cardCvc" class="form-label">CVC</label>
+                                        <input type="text" class="form-control" id="cardCvc" 
+                                               placeholder="123" maxlength="4" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="cardName" class="form-label">Cardholder Name</label>
+                                    <input type="text" class="form-control" id="cardName" 
+                                           placeholder="John Doe" required>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="saveCard">
+                                    <label class="form-check-label" for="saveCard">
+                                        Save card for future payments
+                                    </label>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <small>
+                                        <i class="fas fa-lock me-2"></i>
+                                        Your payment information is encrypted and secure.
+                                    </small>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary w-100" id="payWithCardBtn">
+                                    <i class="fas fa-credit-card me-2"></i>
+                                    Pay with Card
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="alert alert-light mt-4">
+                <div class="d-flex">
+                    <i class="fas fa-shield-alt text-success me-3 mt-1"></i>
+                    <div>
+                        <h6 class="alert-heading mb-2">Secure Payment</h6>
+                        <p class="mb-0 small">
+                            All transactions are secured with SSL encryption. Your payment information is never stored on our servers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Processing Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalTitle">Processing Payment</h5>
+            </div>
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Processing...</span>
+                </div>
+                <p id="paymentModalMessage">Please wait while we process your payment...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-success">
+                    <i class="fas fa-check-circle me-2"></i>Payment Successful
+                </h5>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-check-circle text-success display-1 mb-3"></i>
+                <h5 class="mb-3">Payment Completed Successfully!</h5>
+                <p class="text-muted" id="successMessage">Your wallet has been credited successfully.</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" onclick="redirectToWallet()">
+                    View Wallet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{! In add-funds.hbs - Update the form submission }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadCurrentBalance();
+    document.getElementById('momoForm').addEventListener('submit', handleMomoPayment);
+    document.getElementById('cardForm').addEventListener('submit', handleCardPayment);
+});
+
+async function loadCurrentBalance() {
+    try {
+        const response = await fetch('/payments/balance', {
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken(),
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to load balance');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('currentBalance').textContent = 
+                formatCurrency(result.data.balance, result.data.currency || 'USD');
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('Error loading balance:', error);
+        document.getElementById('currentBalance').textContent = 'Error loading balance';
+    }
+}
+
+async function handleMomoPayment(event) {
+    event.preventDefault();
+    
+    const amount = document.getElementById('momoAmount').value;
+    const provider = document.getElementById('momoProvider').value;
+    const phone = document.getElementById('momoPhone').value;
+    
+    if (!amount || !provider || !phone) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Show loading state
+    showLoadingState('momo');
+    
+    try {
+        const response = await fetch('/payments/initialize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                amount: amount,
+                paymentMethod: 'momo',
+                currency: 'USD',
+                provider: provider,
+                phoneNumber: phone
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Payment initialization failed');
+        }
+        
+        if (result.success) {
+            // Redirect to processing page
+            window.location.href = `/dashboard/payment/processing?reference=${result.data.reference}&method=momo`;
+        } else {
+            throw new Error(result.message);
+        }
+        
+    } catch (error) {
+        hideLoadingState('momo');
+        alert('Payment failed: ' + error.message);
+    }
+}
+
+async function handleCardPayment(event) {
+    event.preventDefault();
+    
+    const amount = document.getElementById('cardAmount').value;
+    const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+    const expiry = document.getElementById('cardExpiry').value;
+    const cvc = document.getElementById('cardCvc').value;
+    const name = document.getElementById('cardName').value;
+    
+    if (!amount || !cardNumber || !expiry || !cvc || !name) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    showLoadingState('card');
+    
+    try {
+        const response = await fetch('/payments/initialize', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
+            },
+            body: JSON.stringify({
+                amount: amount,
+                paymentMethod: 'card',
+                currency: 'USD',
+                card: {
+                    number: cardNumber,
+                    expiry: expiry,
+                    cvc: cvc,
+                    name: name
+                }
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Payment processing failed');
+        }
+        
+        if (result.success) {
+            if (result.data.requiresPin) {
+                // Redirect to PIN entry page
+                window.location.href = `/payments/pin?reference=${result.data.reference}&method=card`;
+            } else if (result.data.requires3DS) {
+                // Handle 3DS authentication
+                handle3DSAuthentication(result.data);
+            } else {
+                // Direct to processing
+                window.location.href = `/payments/processing?reference=${result.data.reference}&method=card`;
+            }
+        } else {
+            throw new Error(result.message);
+        }
+        
+    } catch (error) {
+        hideLoadingState('card');
+        alert('Payment failed: ' + error.message);
+    }
+}
+
+function showLoadingState(method) {
+    const button = document.getElementById(`payWith${method === 'momo' ? 'Momo' : 'Card'}Btn`);
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+}
+
+function hideLoadingState(method) {
+    const button = document.getElementById(`payWith${method === 'momo' ? 'Momo' : 'Card'}Btn`);
+    button.disabled = false;
+    button.innerHTML = `<i class="fas fa-${method === 'momo' ? 'mobile-alt' : 'credit-card'} me-2"></i>Pay with ${method === 'momo' ? 'Mobile Money' : 'Card'}`;
+}
+
+function formatCurrency(amount, currency = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency
+    }).format(amount);
+}
+
+function getAuthToken() {
+    // Implement based on your authentication system
+    return AuthService.getToken();
+} 
+</script>

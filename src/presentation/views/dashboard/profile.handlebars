@@ -1,0 +1,436 @@
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white py-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-user-circle fa-2x me-3"></i>
+                    <div>
+                        <h2 class="card-title mb-0">{{title}}</h2>
+                        <p class="card-text mb-0 opacity-75">Manage your account information</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-5">
+                <!-- User Information -->
+                <div class="row mb-5">
+                    <div class="col-md-6">
+                        <div class="card bg-light h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary mb-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Basic Information
+                                </h5>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Full Name:</strong></td>
+                                        <td id="userFullName">{{user.firstName}} {{user.lastName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Email:</strong></td>
+                                        <td id="userEmail">{{user.email}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Role:</strong></td>
+                                        <td>
+                                            <span
+                                                class="badge bg-{{#if (eq user.role 'admin')}}success{{else if (eq user.role 'owner')}}warning{{else}}primary{{/if}}">
+                                                {{user.role}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td>
+                                            <span class="badge bg-{{#if user.isVerified}}success{{else}}warning{{/if}}">
+                                                {{#if user.isVerified}}Verified{{else}}Pending Verification{{/if}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary mb-4">
+                                    <i class="fas fa-history me-2"></i>
+                                    Account Activity
+                                </h5>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Member Since:</strong></td>
+                                        <td>{{formatDate user.createdAt}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Last Login:</strong></td>
+                                        <td>
+                                            {{#if user.lastLogin}}
+                                            {{formatDate user.lastLogin}}
+                                            {{else}}
+                                            Never
+                                            {{/if}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Account ID:</strong></td>
+                                        <td><code>{{user.id}}</code></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="mb-3">
+                            <i class="fas fa-bolt me-2 text-warning"></i>
+                            Quick Actions
+                        </h5>
+                        <div class="d-grid gap-2 d-md-flex">
+
+                            {{#if (eq user.role 'owner')}}
+                            <button class="btn btn-primary me-md-2" data-bs-toggle="modal"
+                                data-bs-target="#updateEmailModal">
+                                <i class="fas fa-envelope me-2"></i>
+                                Update Email
+                            </button>
+                            <button class="btn btn-warning me-md-2" data-bs-toggle="modal"
+                                data-bs-target="#updatePasswordModal">
+                                <i class="fas fa-lock me-2"></i>
+                                Change Password
+                            </button>
+                            {{/if}}
+                            {{#if (or (eq user.role "admin") (eq user.role "super_admin") (eq user.role "moderator"))}}
+                            <a href="/admin" class="btn btn-success me-md-2">
+                                <i class="fas fa-cog me-2"></i>
+                                Admin Dashboard
+                            </a>
+                            {{/if}}
+                            <a href="/auth/logout" class="btn btn-outline-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Email Modal -->
+<div class="modal fade" id="updateEmailModal" tabindex="-1" aria-labelledby="updateEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateEmailModalLabel">
+                    <i class="fas fa-envelope me-2"></i>Update Email Address
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="updateEmailForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="currentEmail" class="form-label">Current Email</label>
+                        <input type="email" class="form-control" id="currentEmail" value="{{user.email}}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newEmail" class="form-label">New Email Address</label>
+                        <input type="email" class="form-control" id="newEmail" name="newEmail" required
+                            placeholder="Enter your new email address">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPasswordEmail" name="confirmPassword"
+                            required placeholder="Enter your password to confirm">
+                    </div>
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle me-2"></i>
+                            A verification email will be sent to your new email address.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="updateEmailBtn">
+                        <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                        Update Email
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Update Password Modal -->
+<div class="modal fade" id="updatePasswordModal" tabindex="-1" aria-labelledby="updatePasswordModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePasswordModalLabel">
+                    <i class="fas fa-lock me-2"></i>Change Password
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="updatePasswordForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required
+                            placeholder="Enter your current password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required
+                            placeholder="Enter your new password" minlength="6">
+                        <div class="form-text">
+                            Password must be at least 8 characters long.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword"
+                            required placeholder="Confirm your new password">
+                    </div>
+                    <div class="alert alert-warning">
+                        <small>
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            You will be logged out after changing your password.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning" id="updatePasswordBtn">
+                        <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                        Change Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success/Error Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="successToastMessage"></div>
+    </div>
+
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-danger text-white">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="errorToastMessage"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const updateEmailForm = document.getElementById('updateEmailForm');
+        const updatePasswordForm = document.getElementById('updatePasswordForm');
+        const updateEmailBtn = document.getElementById('updateEmailBtn');
+        const updatePasswordBtn = document.getElementById('updatePasswordBtn');
+
+        // Toast elements
+        const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+        const successToastMessage = document.getElementById('successToastMessage');
+        const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+        const errorToastMessage = document.getElementById('errorToastMessage');
+
+        // Update Email Form Handler
+        updateEmailForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const newEmail = document.getElementById('newEmail').value;
+            const confirmPassword = document.getElementById('confirmPasswordEmail').value;
+
+            if (!newEmail || !confirmPassword) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            if (newEmail === '{{user.email}}') {
+                showError('New email must be different from current email');
+                return;
+            }
+
+            await updateEmail({ newEmail, confirmPassword });
+        });
+
+        // Update Password Form Handler
+        updatePasswordForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            if (!currentPassword || !newPassword || !confirmNewPassword) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            if (newPassword !== confirmNewPassword) {
+                showError('New passwords do not match');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showError('Password must be at least 8 characters long');
+                return;
+            }
+
+            await updatePassword({ currentPassword, newPassword });
+        });
+
+        async function updateEmail(payload) {
+            const spinner = updateEmailBtn.querySelector('.spinner-border');
+            const buttonText = updateEmailBtn.querySelector('span:not(.spinner-border)');
+            const originalContent = updateEmailBtn.innerHTML;
+
+            try {
+                // Show loading state
+                updateEmailBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Updating...';
+                updateEmailBtn.disabled = true;
+
+                const response = await fetch('/auth/update-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('Email updated successfully! Please check your new email for verification.');
+                    // Update email in the UI
+                    document.getElementById('userEmail').textContent = payload.newEmail;
+                    // Close modal and reset form
+                    bootstrap.Modal.getInstance(document.getElementById('updateEmailModal')).hide();
+                    updateEmailForm.reset();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error updating email:', error);
+                showError('Failed to update email: ' + error.message);
+            } finally {
+                // Reset button state
+                updateEmailBtn.innerHTML = originalContent;
+                updateEmailBtn.disabled = false;
+            }
+        }
+
+        async function updatePassword(payload) {
+            const spinner = updatePasswordBtn.querySelector('.spinner-border');
+            const buttonText = updatePasswordBtn.querySelector('span:not(.spinner-border)');
+            const originalContent = updatePasswordBtn.innerHTML;
+
+            try {
+                // Show loading state
+                updatePasswordBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Updating...';
+                updatePasswordBtn.disabled = true;
+
+                const response = await fetch('/auth/update-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('Password updated successfully! You will be logged out shortly.');
+                    // Close modal and reset form
+                    bootstrap.Modal.getInstance(document.getElementById('updatePasswordModal')).hide();
+                    updatePasswordForm.reset();
+
+                    // Redirect to login after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = '/auth/logout';
+                    }, 3000);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error updating password:', error);
+                showError('Failed to update password: ' + error.message);
+            } finally {
+                // Reset button state
+                updatePasswordBtn.innerHTML = originalContent;
+                updatePasswordBtn.disabled = false;
+            }
+        }
+
+        function showSuccess(message) {
+            successToastMessage.textContent = message;
+            successToast.show();
+        }
+
+        function showError(message) {
+            errorToastMessage.textContent = message;
+            errorToast.show();
+        }
+
+        // Reset forms when modals are closed
+        document.getElementById('updateEmailModal').addEventListener('hidden.bs.modal', function () {
+            updateEmailForm.reset();
+        });
+
+        document.getElementById('updatePasswordModal').addEventListener('hidden.bs.modal', function () {
+            updatePasswordForm.reset();
+        });
+    });
+</script>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .modal-header {
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .modal-footer {
+        border-top: 2px solid #e9ecef;
+    }
+
+    .toast {
+        z-index: 9999;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+</style>

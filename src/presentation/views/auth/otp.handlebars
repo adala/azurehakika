@@ -1,0 +1,768 @@
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+        <!-- Brand Header -->
+        <div class="text-center mb-5">
+            <div class="brand-logo mb-4">
+                <div class="logo-container mx-auto">
+                    <i class="fas fa-shield-alt logo-icon"></i>
+                </div>
+            </div>
+            <h1 class="brand-name mb-3">Two-Factor Authentication</h1>
+            <p class="text-muted mb-0">Secure Access to Academic Verification System</p>
+            <div class="divider-line mt-3"></div>
+        </div>
+
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-gradient-primary text-white text-center py-4">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-mobile-alt me-2"></i>Enter Verification Code</h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <!-- Email Info Box -->
+                <div class="email-info-box mb-4">
+                    <div class="d-flex align-items-center">
+                        <div class="email-icon me-3">
+                            <i class="fas fa-envelope-circle-check text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="mb-1 fw-semibold">Code sent to your email</p>
+                            <p class="mb-0 text-muted small" id="userEmail">{{email}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{#if errors.length}}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-exclamation-triangle me-3 mt-1"></i>
+                        <div>
+                            <strong class="d-block mb-1">Verification Failed</strong>
+                            <ul class="mb-0 ps-3">
+                                {{#each errors}}
+                                <li>{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {{/if}}
+
+                {{#if success}}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-check-circle me-3 mt-1"></i>
+                        <div>
+                            <strong>Code Sent!</strong> 
+                            <p class="mb-0">A new verification code has been sent to your email.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {{/if}}
+
+                <!-- OTP Instructions -->
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-info-circle me-3 mt-1"></i>
+                        <div>
+                            <strong>Check your email</strong>
+                            <p class="mb-0 small">Enter the 6-digit verification code sent to your email address. This code expires in 10 minutes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="otpForm" action="/auth/verify-otp" method="POST">
+                    <input type="hidden" name="email" value="{{email}}">
+                    
+                    <!-- OTP Input Fields -->
+                    <div class="mb-5">
+                        <label class="form-label fw-semibold mb-3">
+                            <i class="fas fa-key me-2 text-primary"></i>Enter 6-digit code
+                        </label>
+                        <div class="otp-container d-flex justify-content-center gap-2 gap-md-3 mb-4">
+                            <input type="text" class="otp-input" maxlength="1" data-index="1" autocomplete="off" required>
+                            <input type="text" class="otp-input" maxlength="1" data-index="2" autocomplete="off" required>
+                            <input type="text" class="otp-input" maxlength="1" data-index="3" autocomplete="off" required>
+                            <input type="text" class="otp-input" maxlength="1" data-index="4" autocomplete="off" required>
+                            <input type="text" class="otp-input" maxlength="1" data-index="5" autocomplete="off" required>
+                            <input type="text" class="otp-input" maxlength="1" data-index="6" autocomplete="off" required>
+                        </div>
+                        <input type="hidden" id="otpCode" name="otp" required>
+                        <div class="text-center">
+                            <small class="text-muted">Enter each digit in the boxes above</small>
+                        </div>
+                    </div>
+
+                    <!-- Timer & Resend -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div id="timerContainer" class="timer-box">
+                            <i class="fas fa-clock me-2 text-warning"></i>
+                            <span id="timerText" class="fw-semibold">Code expires in: <span id="countdown">10:00</span></span>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="resendBtn" disabled>
+                            <i class="fas fa-redo me-1"></i>
+                            <span id="resendText">Resend Code</span>
+                            <span id="resendTimer" class="d-none"></span>
+                        </button>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold verify-button">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span class="button-text">Verify & Continue</span>
+                            <span class="button-spinner d-none">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Verifying...
+                            </span>
+                        </button>
+
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Login
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="small text-muted mb-0">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        This extra step verifies it's really you trying to access your account
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Tips -->
+        <div class="security-tips mt-4">
+            <div class="card border-0 bg-light">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-lightbulb text-warning me-3 fs-4"></i>
+                        <div>
+                            <h6 class="mb-1">Security Tips</h6>
+                            <p class="mb-0 small text-muted">
+                                Never share your verification code with anyone. If you didn't request this code, please contact support immediately.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1060;">
+            <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-success text-white">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong class="me-auto">Success</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body" id="successToastMessage"></div>
+            </div>
+            
+            <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-danger text-white">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong class="me-auto">Error</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body" id="errorToastMessage"></div>
+            </div>
+
+            <div id="infoToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-info text-white">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong class="me-auto">Information</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body" id="infoToastMessage"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('otpForm');
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const hiddenOtpInput = document.getElementById('otpCode');
+        const verifyButton = document.querySelector('.verify-button');
+        const buttonText = document.querySelector('.button-text');
+        const buttonSpinner = document.querySelector('.button-spinner');
+        const countdownElement = document.getElementById('countdown');
+        const resendBtn = document.getElementById('resendBtn');
+        const resendText = document.getElementById('resendText');
+        const resendTimer = document.getElementById('resendTimer');
+        
+        // Toast elements
+        const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+        const successToastMessage = document.getElementById('successToastMessage');
+        const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+        const errorToastMessage = document.getElementById('errorToastMessage');
+        const infoToast = new bootstrap.Toast(document.getElementById('infoToast'));
+        const infoToastMessage = document.getElementById('infoToastMessage');
+
+        let countdown = 600; // 10 minutes in seconds
+        let canResend = false;
+        let resendCooldown = 30; // 30 seconds cooldown
+
+        // Initialize OTP input focus
+        otpInputs[0].focus();
+
+        // OTP input handling
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (input.value.length === 1) {
+                    // Move to next input if available
+                    if (index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                    updateHiddenOTP();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                // Handle backspace
+                if (e.key === 'Backspace') {
+                    if (input.value === '' && index > 0) {
+                        otpInputs[index - 1].focus();
+                        otpInputs[index - 1].value = '';
+                    } else {
+                        input.value = '';
+                    }
+                    updateHiddenOTP();
+                }
+                
+                // Handle arrow keys
+                if (e.key === 'ArrowLeft' && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+                if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text').trim();
+                if (pasteData.length === 6 && /^\d+$/.test(pasteData)) {
+                    pasteData.split('').forEach((digit, idx) => {
+                        if (otpInputs[idx]) {
+                            otpInputs[idx].value = digit;
+                        }
+                    });
+                    otpInputs[5].focus();
+                    updateHiddenOTP();
+                }
+            });
+        });
+
+        function updateHiddenOTP() {
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            hiddenOtpInput.value = otp;
+            
+            // Enable verify button if OTP is complete
+            verifyButton.disabled = otp.length !== 6;
+        }
+
+        // Start countdown timer
+        function startCountdown() {
+            const timerInterval = setInterval(() => {
+                if (countdown > 0) {
+                    countdown--;
+                    const minutes = Math.floor(countdown / 60);
+                    const seconds = countdown % 60;
+                    countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    // Change color when less than 2 minutes
+                    if (countdown < 120) {
+                        countdownElement.classList.add('text-danger');
+                        countdownElement.classList.remove('text-warning');
+                    } else if (countdown < 300) {
+                        countdownElement.classList.add('text-warning');
+                        countdownElement.classList.remove('text-danger');
+                    }
+                } else {
+                    clearInterval(timerInterval);
+                    showInfoToast('Verification code has expired. Please request a new one.');
+                    resendBtn.disabled = false;
+                    resendText.textContent = 'Resend Code';
+                    canResend = true;
+                }
+            }, 1000);
+        }
+
+        // Start resend cooldown
+        function startResendCooldown() {
+            resendBtn.disabled = true;
+            resendText.classList.add('d-none');
+            resendTimer.classList.remove('d-none');
+            
+            let cooldown = resendCooldown;
+            resendTimer.textContent = `(${cooldown}s)`;
+            
+            const cooldownInterval = setInterval(() => {
+                cooldown--;
+                resendTimer.textContent = `(${cooldown}s)`;
+                
+                if (cooldown <= 0) {
+                    clearInterval(cooldownInterval);
+                    resendBtn.disabled = false;
+                    resendText.classList.remove('d-none');
+                    resendTimer.classList.add('d-none');
+                }
+            }, 1000);
+        }
+
+        // Form submission
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            
+            const otp = hiddenOtpInput.value;
+            if (otp.length !== 6) {
+                showErrorToast('Please enter a complete 6-digit code');
+                return;
+            }
+
+            if (!/^\d+$/.test(otp)) {
+                showErrorToast('Please enter only numbers in the verification code');
+                return;
+            }
+
+            try {
+                // Show loading state
+                buttonText.classList.add('d-none');
+                buttonSpinner.classList.remove('d-none');
+                verifyButton.disabled = true;
+
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
+
+                const response = await fetch('/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('Verification successful! Redirecting...');
+                    localStorage.setItem('token', result.token);
+                    setTimeout(() => {
+                        window.location.href = result.redirectTo || '/dashboard';
+                    }, 1500);
+                } else {
+                    showErrorToast(result.message || 'Verification failed. Please try again.');
+                    
+                    // Clear OTP fields on failure
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
+                    updateHiddenOTP();
+                    
+                    // Shake animation for error
+                    const otpContainer = document.querySelector('.otp-container');
+                    otpContainer.classList.add('shake-error');
+                    setTimeout(() => {
+                        otpContainer.classList.remove('shake-error');
+                    }, 500);
+                }
+            } catch (error) {
+                showErrorToast('Network error. Please check your connection and try again.');
+                console.error('OTP verification error:', error);
+            } finally {
+                buttonText.classList.remove('d-none');
+                buttonSpinner.classList.add('d-none');
+                verifyButton.disabled = false;
+            }
+        });
+
+        // Resend OTP
+        resendBtn.addEventListener('click', async function () {
+            if (!canResend) return;
+            
+            try {
+                showInfoToast('Sending new verification code...');
+                
+                const response = await fetch('/auth/resend-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: document.querySelector('input[name="email"]').value })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccessToast('New verification code sent! Check your email.');
+                    
+                    // Reset OTP fields
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
+                    updateHiddenOTP();
+                    
+                    // Reset countdown
+                    countdown = 600;
+                    countdownElement.textContent = '10:00';
+                    countdownElement.classList.remove('text-danger', 'text-warning');
+                    
+                    // Start cooldown for resend
+                    canResend = false;
+                    startResendCooldown();
+                } else {
+                    showErrorToast(result.message || 'Failed to resend code. Please try again.');
+                }
+            } catch (error) {
+                showErrorToast('Failed to resend code. Please try again later.');
+                console.error('Resend OTP error:', error);
+            }
+        });
+
+        // Toast functions
+        function showSuccessToast(message) {
+            successToastMessage.textContent = message;
+            successToast.show();
+        }
+
+        function showErrorToast(message) {
+            errorToastMessage.textContent = message;
+            errorToast.show();
+        }
+
+        function showInfoToast(message) {
+            infoToastMessage.textContent = message;
+            infoToast.show();
+        }
+
+        // Initialize timers
+        startCountdown();
+        startResendCooldown();
+    });
+</script>
+
+<style>
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3a0ca3;
+    --accent-color: #4cc9f0;
+    --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+body {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.brand-logo {
+    margin-bottom: 1.5rem;
+}
+
+.logo-container {
+    width: 100px;
+    height: 100px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+    border: 5px solid white;
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-container::before {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: pulse 3s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+
+.logo-icon {
+    font-size: 48px;
+    color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.brand-name {
+    font-weight: 800;
+    color: #1e293b;
+    font-size: 32px;
+    letter-spacing: -0.5px;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.divider-line {
+    width: 100px;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+    margin: 0 auto;
+}
+
+.card {
+    border-radius: 20px;
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.bg-gradient-primary {
+    background: var(--gradient-primary) !important;
+}
+
+.card-header {
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.5;
+    animation: float 20s linear infinite;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-50px, -50px) rotate(360deg); }
+}
+
+.card-body {
+    background-color: #ffffff;
+}
+
+.email-info-box {
+    background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+    border-radius: 15px;
+    padding: 1.25rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.email-icon {
+    font-size: 28px;
+}
+
+.email-icon i {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.otp-container {
+    margin: 2rem 0;
+}
+
+.otp-input {
+    width: 60px;
+    height: 70px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-color);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.otp-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    background: white;
+    transform: translateY(-2px);
+}
+
+.otp-input.filled {
+    background: linear-gradient(135deg, #e6f0ff 0%, #f0f4ff 100%);
+    border-color: var(--primary-color);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+}
+
+.timer-box {
+    background: #fff8e1;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ffe082;
+}
+
+#countdown {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+}
+
+.text-warning {
+    color: #f59e0b !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #3a56d4 0%, #2f0b9e 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+}
+
+.btn-primary:hover::after {
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+}
+
+.verify-button {
+    position: relative;
+}
+
+.button-spinner {
+    display: inline-block;
+}
+
+.toast {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1rem;
+}
+
+.security-tips .card {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.security-tips .card:hover {
+    transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake-error {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .logo-container {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .logo-icon {
+        font-size: 36px;
+    }
+    
+    .brand-name {
+        font-size: 24px;
+    }
+    
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .otp-input {
+        width: 50px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .otp-input {
+        width: 45px;
+        height: 55px;
+        font-size: 20px;
+    }
+    
+    .timer-box {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+</style>

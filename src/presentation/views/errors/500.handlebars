@@ -1,0 +1,50 @@
+<div class="error-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="error-content">
+                    <div class="error-icon mb-4">
+                        <i class="fas fa-cogs fa-5x text-secondary"></i>
+                    </div>
+                    <h1 class="display-1 fw-bold text-secondary">500</h1>
+                    <h2 class="h3 mb-4">Internal Server Error</h2>
+                    <p class="lead mb-4">
+                        Something went wrong on our end. Our team has been notified and is working to fix the issue.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                        <a href="/contact" class="btn btn-outline-primary">
+                            <i class="fas fa-envelope me-2"></i>Contact Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .error-icon {
+        animation: rotate 3s linear infinite;
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>

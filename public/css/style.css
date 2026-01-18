@@ -1,0 +1,236 @@
+/* Flash Messages Styles */
+.flash-messages-container {
+    min-width: 400px;
+    max-width: 90vw;
+}
+
+.flash-message {
+    border-left: 4px solid;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.flash-message.alert-success {
+    border-left-color: #198754;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+}
+
+.flash-message.alert-danger {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
+}
+
+.flash-message.alert-warning {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+}
+
+.flash-message.alert-info {
+    border-left-color: #0dcaf0;
+    background: linear-gradient(135deg, #d1ecf1 0%, #b6e7f5 100%);
+}
+
+.flash-icon {
+    font-size: 1.2em;
+    width: 24px;
+    text-align: center;
+}
+
+.flash-content {
+    line-height: 1.4;
+    padding-right: 10px;
+}
+
+/* Progress bar animation */
+@keyframes flashProgress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.flash-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.flash-progress {
+    height: 100%;
+    width: 100%;
+    background: currentColor;
+    opacity: 0.3;
+    animation: flashProgress 5s linear forwards;
+}
+
+/* Ensure Font Awesome icons display properly */
+.fas, .fab, .far, .fal {
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900;
+}
+
+.fab {
+    font-family: 'Font Awesome 6 Brands' !important;
+}
+
+/* Fix for icon alignment in buttons */
+.btn i {
+    line-height: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .flash-messages-container {
+        min-width: 95vw;
+        padding: 0 10px;
+    }
+    
+    .flash-message {
+        font-size: 0.9rem;
+    }
+}
+
+/* Ensure Font Awesome icons display properly */
+.fas,
+.fab,
+.far,
+.fal {
+    font-family: 'Font Awesome 6 Free' !important;
+    font-weight: 900;
+}
+
+/* Fix for Font Awesome 6 */
+.fab {
+    font-family: 'Font Awesome 6 Brands' !important;
+}
+
+/* Ensure proper icon sizing */
+.fa-1x {
+    font-size: 1em;
+}
+
+.fa-2x {
+    font-size: 2em;
+}
+
+.fa-3x {
+    font-size: 3em;
+}
+
+.fa-4x {
+    font-size: 4em;
+}
+
+.fa-5x {
+    font-size: 5em;
+}
+
+.fa-6x {
+    font-size: 6em;
+}
+
+.fa-7x {
+    font-size: 7em;
+}
+
+.fa-8x {
+    font-size: 8em;
+}
+
+.fa-9x {
+    font-size: 9em;
+}
+
+.fa-10x {
+    font-size: 10em;
+}
+
+/* Additional utility classes for icons */
+.icon-sm {
+    font-size: 0.875em;
+}
+
+.icon-lg {
+    font-size: 1.333em;
+}
+
+.icon-xl {
+    font-size: 1.5em;
+}
+
+.icon-2xl {
+    font-size: 2em;
+}
+
+/* Loading state for icons */
+.icon-loading {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Ensure Bootstrap Icons work alongside Font Awesome */
+.bi {
+    display: inline-block;
+    vertical-align: -0.125em;
+}
+
+/* Fix for icon alignment in buttons */
+.btn i {
+    line-height: 1;
+}
+
+/* Navbar brand icon */
+.navbar-brand i {
+    margin-right: 0.5rem;
+}
+
+/* Feature icons */
+.feature-icon i {
+    line-height: 1;
+}
+
+/* Step icons */
+.step-icon i {
+    line-height: 1;
+}
+
+.card input.form-control,
+    .card textarea.form-control,
+    .card select.form-control {
+        color: #212529 !important;
+        background-color: #ffffff !important;
+    }
+
+    .card input.form-control:focus,
+    .card textarea.form-control:focus,
+    .card select.form-control:focus {
+        color: #212529 !important;
+        background-color: #ffffff !important;
+    }
+
+    /* Ensure form-control-lg works properly */
+    .card .form-control-lg {
+        color: #212529 !important;
+        background-color: #ffffff !important;
+    }
+
+    .card .form-control-lg:focus {
+        color: #212529 !important;
+        background-color: #ffffff !important;
+    }
+
+    /* Fix for autofill */
+    .card input:-webkit-autofill,
+    .card input:-webkit-autofill:hover,
+    .card input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #212529 !important;
+        -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    }

@@ -1,0 +1,822 @@
+<br>
+<div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white py-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-graduation-cap fa-2x me-3"></i>
+                    <div>
+                        <h2 class="card-title mb-0">Academic Verification</h2>
+                        <p class="card-text mb-0 opacity-75">Complete the form below to verify your academic certificate
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-5">
+                <!-- Flash Messages -->
+                {{#if flash}}
+                <div class="alert alert-{{flash.type}} alert-dismissible fade show" role="alert">
+                    {{flash.message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {{/if}}
+
+                <!-- Selected Institution Display -->
+                {{#if institution}}
+           
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            {{{safeLogo institution.logo institution.name}}}
+                            <div>
+                                <h5 class="mb-1">{{institution.name}}</h5>
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    {{institution.country}} • {{institution.type}}
+                                </p>
+                                {{#if institution.processingTime}}
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Estimated processing: {{institution.processingTime}}
+                                </p>
+                                {{/if}}
+                                {{#if institution.process}}
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-robot me-1"></i>
+                                    Verification type: {{#if (eq institution.process 'auto')}}Auto{{else}}Manual{{/if}}
+                                </p>
+                                {{/if}}
+                                {{#if institution.numberOfStudents}}
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-users me-1"></i>
+                                    Student population: {{institution.numberOfStudents}} students
+                                </p>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <a href="/api/institutions-page" class="btn btn-outline-primary btn-sm"
+                            onclick="navigateWithToken(event, '/api/institutions-page')">
+                            <i class="fas fa-exchange-alt me-1"></i>Change Institution
+                        </a>
+                    </div>
+                    {{#if institution.description}}
+                    <div class="mt-3 pt-3 border-top">
+                        <p class="mb-0 small text-muted">{{institution.description}}</p>
+                    </div>
+                    {{/if}}
+                </div>
+
+                <form action="/verification/start" method="post" enctype="multipart/form-data" id="verificationForm"
+                    novalidate>
+                    <!-- Hidden token field -->
+                    <input type="hidden" name="token" id="tokenField" value="{{token}}">
+
+                    <!-- Hidden institution field -->
+                    <input type="hidden" name="institutionId" value="{{institution.id}}">
+
+                    <!-- Hidden institution field -->
+                    <input type="hidden" name="process" value="{{institution.process}}">
+
+                    <!-- Personal Information -->
+                    <div class="mb-5">
+                        <h4 class="border-bottom pb-2 mb-4">
+                            <i class="fas fa-user me-2 text-primary"></i>
+                            Personal Information
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label fw-semibold">
+                                        First Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="firstName"
+                                        name="firstName" value="{{formData.firstName}}" placeholder="Your first name"
+                                        required>
+                                    <div class="form-text">As it appears on the certificate</div>
+                                    <div class="invalid-feedback">Please provide your first name</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label fw-semibold">
+                                        Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="lastName"
+                                        name="lastName" value="{{formData.lastName}}" placeholder="Your last name"
+                                        required>
+                                    <div class="form-text">As it appears on the certificate</div>
+                                    <div class="invalid-feedback">Please provide your last name</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="maidenName" class="form-label fw-semibold">
+                                        Maiden Name (Optional)
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="maidenName"
+                                        name="maidenName" value="{{formData.maidenName}}"
+                                        placeholder="If different from current name">
+                                    <div class="form-text">Enter if you used a different name during your studies</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="dateOfBirth" class="form-label fw-semibold">
+                                        Date of Birth <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" class="form-control form-control-lg" id="dateOfBirth"
+                                        name="dateOfBirth" value="{{formData.dateOfBirth}}" max="{{currentDate}}"
+                                        required>
+                                    <div class="form-text">Your date of birth as recorded by the institution</div>
+                                    <div class="invalid-feedback">Please provide a valid date of birth</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Information -->
+                    <div class="mb-5">
+                        <h4 class="border-bottom pb-2 mb-4">
+                            <i class="fas fa-university me-2 text-primary"></i>
+                            Academic Information
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Institution <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="form-control form-control-lg bg-light">
+                                        <strong>{{institution.name}}</strong>
+                                    </div>
+                                    <div class="form-text">
+                                        <a href="/api/institutions-page" class="text-primary"
+                                            id="selectInstitutionLink">
+                                            <i class="fas fa-search me-1"></i>Select different institution
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="courseName" class="form-label fw-semibold">
+                                        Course Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="courseName"
+                                        name="courseName" value="{{formData.courseName}}"
+                                        placeholder="e.g., Computer Science, Business Administration" required>
+                                    <div class="form-text">Full name of your course or program</div>
+                                    <div class="invalid-feedback">Please provide your course name</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="degreeType" class="form-label fw-semibold">
+                                        Degree Type <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-control form-control-lg" id="degreeType" name="degreeType"
+                                        required>
+                                        <option value="">Select Degree Type</option>
+                                        <option value="Bachelor's" {{#eq formData.degreeType "Bachelor's"
+                                            }}selected{{/eq}}>Bachelor's Degree</option>
+                                        <option value="Master's" {{#eq formData.degreeType "Master's" }}selected{{/eq}}>
+                                            Master's Degree</option>
+                                        <option value="PhD" {{#eq formData.degreeType "PhD" }}selected{{/eq}}>
+                                            PhD/Doctorate</option>
+                                        <option value="Associate" {{#eq formData.degreeType "Associate"
+                                            }}selected{{/eq}}>Associate Degree</option>
+                                        <option value="Diploma" {{#eq formData.degreeType "Diploma" }}selected{{/eq}}>
+                                            Diploma</option>
+                                        <option value="Certificate" {{#eq formData.degreeType "Certificate"
+                                            }}selected{{/eq}}>Certificate</option>
+                                        <option value="Foundation" {{#eq formData.degreeType "Foundation"
+                                            }}selected{{/eq}}>Foundation Program</option>
+                                        <option value="Other" {{#eq formData.degreeType "Other" }}selected{{/eq}}>Other
+                                        </option>
+                                    </select>
+                                    <div class="form-text">Type of degree or certificate awarded</div>
+                                    <div class="invalid-feedback">Please select a degree type</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="classification" class="form-label fw-semibold">
+                                        Classification
+                                    </label>
+                                    <select class="form-control form-control-lg" id="classification"
+                                        name="classification">
+                                        <option value="">Select Classification (Optional)</option>
+                                        <option value="1st" {{#eq formData.classification "1st" }}selected{{/eq}}>First
+                                            Class Honours (1st)</option>
+                                        <option value="2:1" {{#eq formData.classification "2:1" }}selected{{/eq}}>Upper
+                                            Second Class (2:1)</option>
+                                        <option value="2:2" {{#eq formData.classification "2:2" }}selected{{/eq}}>Lower
+                                            Second Class (2:2)</option>
+                                        <option value="3rd" {{#eq formData.classification "3rd" }}selected{{/eq}}>Third
+                                            Class (3rd)</option>
+                                        <option value="Pass" {{#eq formData.classification "Pass" }}selected{{/eq}}>Pass
+                                        </option>
+                                        <option value="Distinction" {{#eq formData.classification "Distinction"
+                                            }}selected{{/eq}}>Distinction</option>
+                                        <option value="Merit" {{#eq formData.classification "Merit" }}selected{{/eq}}>
+                                            Merit</option>
+                                        <option value="Credit" {{#eq formData.classification "Credit" }}selected{{/eq}}>
+                                            Credit</option>
+                                        <option value="Other" {{#eq formData.classification "Other" }}selected{{/eq}}>
+                                            Other</option>
+                                    </select>
+                                    <div class="form-text">Your academic classification or grade</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="graduationYear" class="form-label fw-semibold">
+                                        Year of Graduation <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control form-control-lg" id="graduationYear"
+                                        name="graduationYear" value="{{formData.graduationYear}}" min="1950"
+                                        max="{{currentYear}}" placeholder="YYYY" required>
+                                    <div class="form-text">Year you completed your studies</div>
+                                    <div class="invalid-feedback">Please provide a valid graduation year</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentId" class="form-label fw-semibold">
+                                        Student ID (Optional)
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="studentId"
+                                        name="studentId" value="{{formData.studentId}}"
+                                        placeholder="If available on certificate">
+                                    <div class="form-text">Your student identification number</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document Upload -->
+                    <div class="mb-5">
+                        <h4 class="border-bottom pb-2 mb-4">
+                            <i class="fas fa-file-upload me-2 text-primary"></i>
+                            Document Upload
+                        </h4>
+
+                        <!-- Certificate Upload -->
+                        <div class="mb-4">
+                            <label for="certificate" class="form-label fw-semibold">
+                                Upload Certificate <span class="text-danger">*</span>
+                            </label>
+                            <input type="file" class="form-control form-control-lg" id="certificate" name="certificate"
+                                accept=".jpg,.jpeg,.png,.pdf" required>
+                            <div class="form-text">
+                                Supported formats: JPG, PNG, PDF. Maximum file size: 10MB.
+                                Ensure the document is clear and all text is readable.
+                            </div>
+                            <div class="invalid-feedback">Please upload your certificate</div>
+                        </div>
+
+                        <!-- Consent Form Upload -->
+                        <div class="mb-3">
+                            <label for="consentForm" class="form-label fw-semibold">
+                                Upload Consent Form <span class="text-danger">*</span>
+                            </label>
+                            <input type="file" class="form-control form-control-lg" id="consentForm" name="consentForm"
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" required>
+                            <div class="form-text">
+                                Signed consent form is required for verification.
+                                Supported formats: JPG, PNG, PDF, DOC, DOCX. Maximum file size: 10MB.
+                                <button type="button" class="btn btn-link p-0 text-primary d-block mt-1"
+                                    id="downloadConsentBtn">
+                                    <i class="fas fa-download me-1"></i>Download consent form template (PDF)
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">Please upload your signed consent form</div>
+                        </div>
+
+                        <!-- Upload Previews -->
+                        <div id="uploadPreviews" class="mt-3"></div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="mb-4">
+                        <h4 class="border-bottom pb-2 mb-4">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>
+                            Additional Information
+                        </h4>
+                        <div class="mb-3">
+                            <label for="additionalNotes" class="form-label fw-semibold">
+                                Additional Notes (Optional)
+                            </label>
+                            <textarea class="form-control" id="additionalNotes" name="additionalNotes" rows="3"
+                                placeholder="Any additional information that might help with verification (e.g., name variations, special circumstances)...">{{formData.additionalNotes}}</textarea>
+                            <div class="form-text">Include any information that might assist in the verification process
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consent Agreement -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="consentAgreement"
+                                name="consentAgreement" required>
+                            <label class="form-check-label fw-semibold" for="consentAgreement">
+                                I authorize the verification of my academic credentials and confirm that
+                                all information provided is accurate to the best of my knowledge.
+                                I understand that this verification process may involve contacting the educational
+                                institution
+                                and that providing false information may result in legal consequences.
+                            </label>
+                            <div class="invalid-feedback">You must agree to the terms before submitting</div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg py-3" id="submitBtn">
+                            <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Submit for Verification
+                        </button>
+                    </div>
+                </form>
+                {{else}}
+                <div class="text-center py-5">
+                    <i class="fas fa-university fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Institution Selected</h4>
+                    <p class="text-muted mb-4">Please select an institution to continue with verification</p>
+                    <a href="/api/institutions-page" class="btn btn-primary btn-lg" id="selectInstitutionBtn">
+                        <i class="fas fa-search me-2"></i>Select Institution
+                    </a>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="card border-0 bg-light mt-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-question-circle me-2 text-primary"></i>
+                    Need Help?
+                </h5>
+                <p class="card-text mb-2">
+                    Ensure your documents meet the following requirements for best results:
+                </p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i> Clear, high-quality image or scan</li>
+                    <li><i class="fas fa-check text-success me-2"></i> All text is readable and not cropped</li>
+                    <li><i class="fas fa-check text-success me-2"></i> File size under 10MB</li>
+                    <li><i class="fas fa-check text-success me-2"></i> Supported formats (JPG, PNG, PDF, DOC, DOCX)</li>
+                    <li><i class="fas fa-check text-success me-2"></i> Consent form must be signed and dated</li>
+                    <li><i class="fas fa-check text-success me-2"></i> Certificate should show complete details</li>
+                </ul>
+                <div class="mt-3">
+                    <strong>About Consent Forms:</strong>
+                    <p class="mb-0 text-muted">
+                        A signed consent form is required to authorize us to contact your educational institution
+                        for verification purposes. Download our template if you need a consent form.
+                    </p>
+                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="helpDownloadConsentBtn">
+                        <i class="fas fa-download me-1"></i>Download Consent Form Template (PDF)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Token management
+    function getToken() {
+        return localStorage.getItem('token') || sessionStorage.getItem('token');
+    }
+
+    function setTokenInForm() {
+        const token = getToken();
+        const tokenField = document.getElementById('tokenField');
+        if (tokenField && token) {
+            tokenField.value = token;
+            console.log('Token set in form:', token.substring(0, 10) + '...');
+        } else {
+            console.warn('Token not found in storage');
+        }
+    }
+
+    // Navigation with token
+    function navigateWithToken(url) {
+        const token = getToken();
+        if (!token) {
+            showAlert('Authentication required. Please log in again.', 'danger');
+            setTimeout(() => window.location.href = '/auth/login', 2000);
+            return;
+        }
+        window.location.href = `${url}?token=${encodeURIComponent(token)}`;
+    }
+
+    // Initialize on DOM load
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set token in form
+        setTokenInForm();
+
+        // Set max dates
+        const currentDate = new Date().toISOString().split('T')[0];
+        const currentYear = new Date().getFullYear();
+
+        const dobField = document.getElementById('dateOfBirth');
+        if (dobField && !dobField.max) {
+            dobField.max = currentDate;
+        }
+
+        const graduationYearField = document.getElementById('graduationYear');
+        if (graduationYearField && !graduationYearField.max) {
+            graduationYearField.max = currentYear;
+        }
+
+        // Initialize file previews
+        initializeFilePreviews();
+
+        // Set up event listeners
+        setupEventListeners();
+
+        // Apply Bootstrap validation styles
+        initializeBootstrapValidation();
+    });
+
+    function setupEventListeners() {
+        // Navigation buttons
+        const changeInstitutionBtn = document.getElementById('changeInstitutionBtn');
+        const selectInstitutionLink = document.getElementById('selectInstitutionLink');
+        const selectInstitutionBtn = document.getElementById('selectInstitutionBtn');
+
+        if (changeInstitutionBtn) {
+            changeInstitutionBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateWithToken('/api/institutions-page');
+            });
+        }
+
+        if (selectInstitutionLink) {
+            selectInstitutionLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateWithToken('/api/institutions-page');
+            });
+        }
+
+        if (selectInstitutionBtn) {
+            selectInstitutionBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateWithToken('/api/institutions-page');
+            });
+        }
+
+        // Consent form download buttons
+        const downloadConsentBtn = document.getElementById('downloadConsentBtn');
+        const helpDownloadConsentBtn = document.getElementById('helpDownloadConsentBtn');
+
+        if (downloadConsentBtn) {
+            downloadConsentBtn.addEventListener('click', downloadConsentFormTemplate);
+        }
+
+        if (helpDownloadConsentBtn) {
+            helpDownloadConsentBtn.addEventListener('click', downloadConsentFormTemplate);
+        }
+
+        // Form submission
+        const verificationForm = document.getElementById('verificationForm');
+        if (verificationForm) {
+            verificationForm.addEventListener('submit', handleFormSubmit);
+        }
+    }
+
+    function initializeBootstrapValidation() {
+        // Bootstrap form validation
+        const forms = document.querySelectorAll('.needs-validation');
+        forms.forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }
+
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        console.log('Form submission started');
+
+        // Ensure token is set
+        setTokenInForm();
+
+        const form = e.target;
+
+        // Validate form
+        if (!validateForm(form)) {
+            console.log('Form validation failed');
+            form.classList.add('was-validated');
+            scrollToFirstError();
+            return;
+        }
+
+        // Submit form
+        await submitForm(form);
+    }
+
+    function validateForm(form) {
+        let isValid = true;
+
+        // Check required fields
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        // Validate date of birth
+        const dobField = document.getElementById('dateOfBirth');
+        if (dobField && dobField.value) {
+            const dob = new Date(dobField.value);
+            const today = new Date();
+            if (dob >= today) {
+                dobField.classList.add('is-invalid');
+                isValid = false;
+            }
+        }
+
+        // Validate graduation year
+        const graduationYearField = document.getElementById('graduationYear');
+        if (graduationYearField && graduationYearField.value) {
+            const year = parseInt(graduationYearField.value);
+            const currentYear = new Date().getFullYear();
+            if (year < 1950 || year > currentYear) {
+                graduationYearField.classList.add('is-invalid');
+                isValid = false;
+            }
+        }
+
+        // Validate file uploads
+        const certificateFile = document.getElementById('certificate');
+        const consentFile = document.getElementById('consentForm');
+
+        if (certificateFile && !certificateFile.files.length) {
+            certificateFile.classList.add('is-invalid');
+            isValid = false;
+        }
+
+        if (consentFile && !consentFile.files.length) {
+            consentFile.classList.add('is-invalid');
+            isValid = false;
+        }
+
+        // Validate consent agreement
+        const consentAgreement = document.getElementById('consentAgreement');
+        if (consentAgreement && !consentAgreement.checked) {
+            consentAgreement.classList.add('is-invalid');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function scrollToFirstError() {
+        const firstError = document.querySelector('.is-invalid');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }
+    }
+
+    async function submitForm(form) {
+        const submitBtn = document.getElementById('submitBtn');
+        const spinner = submitBtn.querySelector('.spinner-border');
+        const icon = submitBtn.querySelector('.fa-paper-plane');
+
+        // Show loading state
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        icon.classList.add('d-none');
+        submitBtn.innerHTML = 'Processing Verification...';
+
+        try {
+            // The form will handle the redirect on the server side
+            console.log('Submitting form to:', form.action);
+            form.submit();
+
+        } catch (error) {
+            console.error('Form submission error:', error);
+            showAlert('Error submitting form. Please try again.', 'danger');
+
+            // Reset button state
+            submitBtn.disabled = false;
+            spinner.classList.add('d-none');
+            icon.classList.remove('d-none');
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Submit for Verification';
+        }
+    }
+
+    // File upload previews (keep your existing implementation)
+    function initializeFilePreviews() {
+        const certificateInput = document.getElementById('certificate');
+        const consentFormInput = document.getElementById('consentForm');
+
+        if (certificateInput) {
+            certificateInput.addEventListener('change', function (e) {
+                handleFileUpload(e, 'certificate');
+            });
+        }
+
+        if (consentFormInput) {
+            consentFormInput.addEventListener('change', function (e) {
+                handleFileUpload(e, 'consent');
+            });
+        }
+    }
+
+    function handleFileUpload(event, type) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file size (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            showAlert('File size must be less than 10MB', 'danger');
+            event.target.value = '';
+            return;
+        }
+
+        const previewId = `${type}Preview`;
+        let existingPreview = document.getElementById(previewId);
+
+        if (!existingPreview) {
+            existingPreview = document.createElement('div');
+            existingPreview.id = previewId;
+            existingPreview.className = 'file-preview mb-3';
+            document.getElementById('uploadPreviews').appendChild(existingPreview);
+        }
+
+        const fileIcon = getFileIcon(file);
+        const fileSize = formatFileSize(file.size);
+
+        existingPreview.innerHTML = `
+            <div class="card border">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        ${fileIcon}
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">${file.name}</h6>
+                            <p class="text-muted mb-0">${fileSize} • ${type === 'certificate' ? 'Certificate' : 'Consent Form'}</p>
+                            <small class="text-success">
+                                <i class="fas fa-check-circle me-1"></i>Uploaded successfully
+                            </small>
+                        </div>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFile('${type}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove invalid state
+        event.target.classList.remove('is-invalid');
+    }
+
+    function getFileIcon(file) {
+        if (file.type.includes('pdf')) {
+            return '<i class="fas fa-file-pdf text-danger fa-2x"></i>';
+        } else if (file.type.includes('image')) {
+            return '<i class="fas fa-file-image text-success fa-2x"></i>';
+        } else if (file.type.includes('word') || file.type.includes('document')) {
+            return '<i class="fas fa-file-word text-primary fa-2x"></i>';
+        } else {
+            return '<i class="fas fa-file text-secondary fa-2x"></i>';
+        }
+    }
+
+    function removeFile(type) {
+        const input = document.getElementById(type === 'certificate' ? 'certificate' : 'consentForm');
+        const preview = document.getElementById(`${type}Preview`);
+
+        if (input) input.value = '';
+        if (preview) preview.remove();
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Consent form template download
+    function downloadConsentFormTemplate() {
+        // Simple text fallback - you can enhance this with PDF generation later
+        const consentContent = `ACADEMIC VERIFICATION CONSENT FORM
+
+I hereby authorize the verification of my academic credentials.
+
+PERSONAL INFORMATION:
+Full Name: _________________________
+Date of Birth: _____________________
+Student ID: ________________________
+Institution: ________________________
+Course: ____________________________
+Degree Type: _______________________
+Graduation Year: ___________________
+
+CONSENT:
+I authorize the verification service to contact the educational institution listed above to verify my academic credentials.
+
+Signature: _________________________
+Date: ______________________________
+
+Witness: ___________________________
+Date: ______________________________`;
+
+        const blob = new Blob([consentContent], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Academic_Verification_Consent_Form.txt';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        showAlert('Consent form template downloaded successfully!', 'success');
+    }
+
+    // Alert function
+    function showAlert(message, type) {
+        // Remove existing alerts
+        const existingAlerts = document.querySelectorAll('.alert-dismissible');
+        existingAlerts.forEach(alert => alert.remove());
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        const cardBody = document.querySelector('.card-body');
+        if (cardBody) {
+            cardBody.prepend(alertDiv);
+        }
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+</script>
+
+<style>
+    .file-preview .card {
+        border-left: 4px solid #28a745;
+        transition: all 0.3s ease;
+    }
+
+    .file-preview .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+
+    .form-control:read-only {
+        background-color: #f8f9fa;
+    }
+
+    /* Custom select styling */
+    select.form-control-lg {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem !important;
+        }
+    }
+</style>

@@ -1,0 +1,29 @@
+{{#if flash}}
+{{#with (flash.get)}}
+{{#if messages.length}}
+<div class="flash-messages-container position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 9999;">
+    {{#each messages}}
+    <div class="alert alert-{{../type}} alert-dismissible fade show flash-message mb-2 shadow" role="alert">
+        <div class="d-flex align-items-center">
+            <div class="flash-icon me-2">
+                {{#if (eq ../type 'success')}}
+                <i class="fas fa-check-circle"></i>
+                {{else if (eq ../type 'error')}}
+                <i class="fas fa-exclamation-circle"></i>
+                {{else if (eq ../type 'warning')}}
+                <i class="fas fa-exclamation-triangle"></i>
+                {{else if (eq ../type 'info')}}
+                <i class="fas fa-info-circle"></i>
+                {{/if}}
+            </div>
+            <div class="flash-content flex-grow-1">
+                {{this}}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {{/each}}
+</div>
+{{/if}}
+{{/with}}
+{{/if}}

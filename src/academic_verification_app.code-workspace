@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../academic_verification_test_server"
+		},
+		{
+			"path": "../../academic_verification_admin_portal"
+		},
+		{
+			"path": "../../offin_erp/webapp-20"
+		},
+		{
+			"path": "../../offin_erp/webapp"
+		},
+		{
+			"path": "../../offin_erp/webapp-6"
+		},
+		{
+			"path": "../../healtcare/hdrms"
+		}
+	],
+	"settings": {}
+}

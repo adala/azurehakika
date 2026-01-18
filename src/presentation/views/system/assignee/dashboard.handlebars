@@ -1,0 +1,381 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 mb-2">Verification Processing Dashboard</h1>
+                            <p class="text-muted mb-0">Welcome back, {{user.name}}!</p>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge bg-primary fs-6 p-2">
+                                <i class="fas fa-tasks me-2"></i>
+                                {{totalTasks}} Total Assignments
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-primary">
+                                <i class="fas fa-plug me-2"></i>API Verifications
+                            </h5>
+                            <h2 class="display-6 fw-bold">{{apiTasksCount}}</h2>
+                            <p class="text-muted mb-0">Pending API-based verifications</p>
+                        </div>
+                        <div class="icon-shape bg-primary text-white rounded-3 p-3">
+                            <i class="fas fa-robot fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-success shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title text-success">
+                                <i class="fas fa-keyboard me-2"></i>Manual Verifications
+                            </h5>
+                            <h2 class="display-6 fw-bold">{{manualTasksCount}}</h2>
+                            <p class="text-muted mb-0">Pending manual entries</p>
+                        </div>
+                        <div class="icon-shape bg-success text-white rounded-3 p-3">
+                            <i class="fas fa-user-edit fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Tasks Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plug me-2"></i>API-Based Verifications
+                        <span class="badge bg-white text-primary ms-2">{{tasks.api.length}}</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{#if tasks.api.length}}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Ref #</th>
+                                    <th>Student</th>
+                                    <th>Institution</th>
+                                    <th>Assigned</th>
+                                    <th>Priority</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each tasks.api}}
+                                <tr>
+                                    <td>
+                                        <strong>{{referenceNumber}}</strong>
+                                    </td>
+                                    <td>{{studentName}}</td>
+                                    <td>{{institutionName}}</td>
+                                    <td>
+                                        <small>{{formatDate assignedDate}}</small>
+                                        {{#if isOverdue}}
+                                        <span class="badge bg-danger ms-2">Overdue</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{priorityColor priority}}">
+                                            {{priority}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-primary btn-sm" 
+                                                    onclick="processApiVerification('{{assignmentId}}')">
+                                                <i class="fas fa-robot me-1"></i>Process via API
+                                            </button>
+                                            <button class="btn btn-outline-primary btn-sm"
+                                                    onclick="showManualOption('{{assignmentId}}')">
+                                                <i class="fas fa-keyboard me-1"></i>Manual Entry
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{else}}
+                    <div class="text-center py-5">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h4>No API verifications pending</h4>
+                        <p class="text-muted">All API-based verifications are processed</p>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Tasks Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-keyboard me-2"></i>Manual Verifications
+                        <span class="badge bg-white text-success ms-2">{{tasks.manual.length}}</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{#if tasks.manual.length}}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Ref #</th>
+                                    <th>Student</th>
+                                    <th>Institution</th>
+                                    <th>Due Date</th>
+                                    <th>Priority</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each tasks.manual}}
+                                <tr>
+                                    <td>
+                                        <strong>{{referenceNumber}}</strong>
+                                    </td>
+                                    <td>{{studentName}}</td>
+                                    <td>{{institutionName}}</td>
+                                    <td>
+                                        <small>{{formatDate dueDate}}</small>
+                                        {{#if isOverdue}}
+                                        <span class="badge bg-danger ms-2">Overdue</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{priorityColor priority}}">
+                                            {{priority}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/assignee/assignments/{{assignmentId}}/manual-entry" 
+                                           class="btn btn-success btn-sm">
+                                            <i class="fas fa-keyboard me-1"></i>Enter Data
+                                        </a>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{else}}
+                    <div class="text-center py-5">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h4>No manual verifications pending</h4>
+                        <p class="text-muted">All manual verifications are processed</p>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manual Option Modal -->
+<div class="modal fade" id="manualOptionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Processing Options</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>You've selected to process this verification manually instead of using the API.</p>
+                <p>This will open a form for you to enter the verification data manually.</p>
+                <input type="hidden" id="manualAssignmentId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="proceedToManualEntry()">
+                    <i class="fas fa-keyboard me-1"></i>Proceed to Manual Entry
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Processing Status Modal -->
+<div class="modal fade" id="processingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Processing Verification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                    <h5 id="processingMessage">Calling institution API...</h5>
+                    <p class="text-muted" id="processingDetails">Please wait while we process your request</p>
+                    <div class="progress mt-3">
+                        <div id="processingProgress" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentAssignmentId = null;
+
+function showManualOption(assignmentId) {
+    document.getElementById('manualAssignmentId').value = assignmentId;
+    const modal = new bootstrap.Modal(document.getElementById('manualOptionModal'));
+    modal.show();
+}
+
+function proceedToManualEntry() {
+    const assignmentId = document.getElementById('manualAssignmentId').value;
+    window.location.href = `/assignee/assignments/${assignmentId}/manual-entry`;
+}
+
+async function processApiVerification(assignmentId) {
+    currentAssignmentId = assignmentId;
+    
+    const modal = new bootstrap.Modal(document.getElementById('processingModal'));
+    modal.show();
+    
+    updateProcessingStatus('Initiating API call...', 10);
+    
+    try {
+        // Start API processing
+        const response = await fetch(`/assignee/assignments/${assignmentId}/process-api`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        updateProcessingStatus('API call in progress...', 40);
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            updateProcessingStatus('Processing response...', 70);
+            
+            // Poll for completion
+            const checkInterval = setInterval(async () => {
+                const statusResponse = await fetch(`/assignee/assignments/${assignmentId}/status`);
+                const statusData = await statusResponse.json();
+                
+                if (statusData.success) {
+                    if (statusData.data.assignmentStatus === 'completed') {
+                        clearInterval(checkInterval);
+                        updateProcessingStatus('Verification completed successfully!', 100);
+                        
+                        setTimeout(() => {
+                            modal.hide();
+                            showSuccessToast('Verification processed successfully');
+                            // Reload to update task list
+                            setTimeout(() => window.location.reload(), 1000);
+                        }, 1500);
+                    }
+                }
+            }, 2000);
+            
+        } else {
+            throw new Error(result.error);
+        }
+        
+    } catch (error) {
+        updateProcessingStatus('Error: ' + error.message, 0);
+        
+        setTimeout(() => {
+            modal.hide();
+            showErrorToast('Processing failed: ' + error.message);
+        }, 2000);
+    }
+}
+
+function updateProcessingStatus(message, progress) {
+    document.getElementById('processingMessage').textContent = message;
+    document.getElementById('processingProgress').style.width = `${progress}%`;
+    
+    const details = {
+        10: 'Connecting to institution API...',
+        40: 'Waiting for institution response...',
+        70: 'Validating and processing data...',
+        100: 'Saving verification results...'
+    }[progress];
+    
+    if (details) {
+        document.getElementById('processingDetails').textContent = details;
+    }
+}
+
+function showSuccessToast(message) {
+    const toast = new bootstrap.Toast(document.getElementById('successToast'));
+    document.getElementById('successToastMessage').textContent = message;
+    toast.show();
+}
+
+function showErrorToast(message) {
+    const toast = new bootstrap.Toast(document.getElementById('errorToast'));
+    document.getElementById('errorToastMessage').textContent = message;
+    toast.show();
+}
+</script>
+
+<style>
+.icon-shape {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-bar {
+    transition: width 0.5s ease;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.badge {
+    padding: 0.5em 0.8em;
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+</style>

@@ -1,0 +1,297 @@
+<div class="verification-failed-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body text-center p-5">
+                        <!-- Error Icon -->
+                        <div class="error-icon mb-4">
+                            <div class="icon-circle bg-danger">
+                                <i class="fas fa-exclamation-triangle fa-3x text-white"></i>
+                            </div>
+                        </div>
+
+                        <!-- Error Title -->
+                        <h1 class="display-5 fw-bold text-danger mb-3">Email Verification Failed</h1>
+
+                        <!-- Error Message -->
+                        <div class="error-message mb-4">
+                            <p class="lead text-muted">
+                                We couldn't verify your email address. This could be due to:
+                            </p>
+                            <div class="alert alert-danger border-0 mt-4">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-times-circle me-2"></i>Verification Status: Failed
+                                </h5>
+                                <p class="mb-0">{{message}}</p>
+                            </div>
+                        </div>
+
+                        <!-- Possible Reasons -->
+                        <div class="reasons-section mb-5">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-body text-center p-4">
+                                            <div class="reason-icon text-danger mb-3">
+                                                <i class="fas fa-link fa-2x"></i>
+                                            </div>
+                                            <h5>Invalid Link</h5>
+                                            <p class="text-muted">The verification link may be expired or invalid.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-body text-center p-4">
+                                            <div class="reason-icon text-danger mb-3">
+                                                <i class="fas fa-user-clock fa-2x"></i>
+                                            </div>
+                                            <h5>Already Verified</h5>
+                                            <p class="text-muted">This email address may already be verified.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Solutions Section -->
+                        <div class="solutions-section mb-5">
+                            <div class="alert alert-info border-0">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-lightbulb me-2"></i>Here's how to fix this:
+                                </h5>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-start mb-3">
+                                            <i class="fas fa-redo-alt text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6 class="mb-1">Request New Verification Email</h6>
+                                                <p class="small text-muted mb-0">Get a fresh verification link sent to
+                                                    your email</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-start mb-3">
+                                            <i class="fas fa-envelope text-primary me-3 mt-1"></i>
+                                            <div>
+                                                <h6 class="mb-1">Check Email Correctness</h6>
+                                                <p class="small text-muted mb-0">Ensure you're using the right email
+                                                    address</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <div class="d-grid gap-3">
+                                <button onclick="resendVerification()" class="btn btn-primary btn-lg" id="resendBtn">
+                                    <i class="fas fa-paper-plane me-2"></i>Resend Verification Email
+                                </button>
+                                <div class="d-flex gap-2">
+                                    <a href="/auth/login" class="btn btn-outline-primary flex-fill">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Try Logging In
+                                    </a>
+                                    <a href="/contact" class="btn btn-outline-secondary flex-fill">
+                                        <i class="fas fa-headset me-2"></i>Contact Support
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Help Section -->
+                        <div class="help-section mt-5 pt-4 border-top">
+                            <h6 class="text-muted mb-3">
+                                <i class="fas fa-question-circle me-2"></i>Still having trouble?
+                            </h6>
+                            <div class="small text-muted">
+                                <p class="mb-1">• Check if your email address <strong>{{user.email}}</strong> is correct
+                                </p>
+                                <p class="mb-1">• Look for the verification email in your spam folder</p>
+                                <p class="mb-1">• Ensure you're clicking the link from the most recent email</p>
+                                <p class="mb-0">• Try using a different web browser</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .verification-failed-page {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .icon-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        animation: shake 0.5s ease-in-out;
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
+
+    .reason-icon {
+        opacity: 0.8;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .btn {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 12px 24px;
+    }
+
+    .alert {
+        border-radius: 15px;
+    }
+
+    .help-section {
+        background: rgba(0, 0, 0, 0.02);
+        margin: 0 -20px -20px -20px;
+        padding: 20px;
+    }
+
+    /* Loading animation for resend button */
+    .btn-loading {
+        position: relative;
+        color: transparent !important;
+    }
+
+    .btn-loading:after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin-left: -10px;
+        margin-top: -10px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        border-right-color: transparent;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<script>
+    let resendCooldown = 0;
+
+    function resendVerification() {
+        const btn = document.getElementById('resendBtn');
+
+        if (resendCooldown > 0) {
+            alert(`Please wait ${resendCooldown} seconds before requesting a new verification email.`);
+            return;
+        }
+
+        // Disable button and show loading
+        btn.disabled = true;
+        btn.classList.add('btn-loading');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Sending...';
+
+        // Simulate API call to resend verification email
+        setTimeout(() => {
+            // In a real application, you would make an API call here
+            // For now, we'll simulate success
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Email Sent!';
+            btn.classList.remove('btn-primary', 'btn-loading');
+            btn.classList.add('btn-success');
+
+            // Show success message
+            if (typeof FlashMessages !== 'undefined') {
+                FlashMessages.show('New verification email sent successfully!', 'success');
+            } else {
+                alert('New verification email sent successfully! Please check your inbox.');
+            }
+
+            // Set cooldown (60 seconds)
+            resendCooldown = 60;
+            startCooldownTimer();
+
+            // Re-enable button after 5 seconds and reset to original state
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-primary');
+            }, 5000);
+
+        }, 2000);
+    }
+
+    function startCooldownTimer() {
+        const timer = setInterval(() => {
+            resendCooldown--;
+
+            if (resendCooldown <= 0) {
+                clearInterval(timer);
+            }
+        }, 1000);
+    }
+
+    // Add error animation on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add shake animation to error icon
+        const errorIcon = document.querySelector('.icon-circle');
+        setTimeout(() => {
+            errorIcon.style.animation = 'shake 0.5s ease-in-out';
+        }, 500);
+
+        // Add error message typing effect if errorMessage is present
+        const errorMessageElement = document.querySelector('.alert-danger p');
+        if (errorMessageElement && errorMessageElement.textContent) {
+            const errorMessage = errorMessageElement.textContent;
+            errorMessageElement.textContent = '';
+            let i = 0;
+
+            const typeWriter = setInterval(() => {
+                if (i < errorMessage.length) {
+                    errorMessageElement.textContent += errorMessage.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typeWriter);
+                }
+            }, 30);
+        }
+    });
+</script>

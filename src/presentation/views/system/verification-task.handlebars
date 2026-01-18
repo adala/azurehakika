@@ -1,0 +1,326 @@
+<div class="container-fluid py-4">
+    <div class="content-header">
+        <h1 class="h3">
+            <i class="fas fa-tasks"></i> Verification Tasks
+        </h1>
+        <p class="text-muted">Assign and manage verification tasks to verifiers</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Pending Verifications</h5>
+                </div>
+                <div class="card-body">
+                    <div id="pendingTasksList">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Available Verifiers</h5>
+                </div>
+                <div class="card-body">
+                    <div id="verifiersList">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Assigned Tasks</h5>
+                </div>
+                <div class="card-body">
+                    <div id="assignedTasksList">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Task Modal -->
+<div class="modal fade" id="assignTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Assign Verification Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assignTaskForm">
+                    <input type="hidden" id="taskId">
+                    <div class="mb-3">
+                        <label for="selectedVerifier" class="form-label">Assign to Verifier</label>
+                        <select class="form-select" id="selectedVerifier" required>
+                            <option value="">Select a verifier...</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select class="form-select" id="priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <input type="date" class="form-control" id="dueDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="instructions" class="form-label">Special Instructions</label>
+                        <textarea class="form-control" id="instructions" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="assignTaskBtn">Assign Task</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadVerificationData();
+
+        document.getElementById('assignTaskBtn').addEventListener('click', assignTask);
+    });
+
+    async function loadVerificationData() {
+        await loadPendingTasks();
+        await loadVerifiers();
+        await loadAssignedTasks();
+    }
+
+    async function loadPendingTasks() {
+        try {
+            // Mock data - replace with actual API call
+            const pendingTasks = [
+                { id: '1', applicant: 'John Doe', institution: 'University of Example', submitted: '2024-01-15' },
+                { id: '2', applicant: 'Jane Smith', institution: 'Example College', submitted: '2024-01-16' },
+                { id: '3', applicant: 'Bob Johnson', institution: 'Test University', submitted: '2024-01-14' }
+            ];
+
+            const pendingTasksList = document.getElementById('pendingTasksList');
+
+            if (pendingTasks.length === 0) {
+                pendingTasksList.innerHTML = '<p class="text-muted">No pending verification tasks</p>';
+                return;
+            }
+
+            let html = '';
+
+            pendingTasks.forEach(task => {
+                html += `
+                <div class="card mb-2">
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">${task.applicant}</h6>
+                                <small class="text-muted">${task.institution}</small>
+                                <br>
+                                <small class="text-muted">Submitted: ${task.submitted}</small>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="showAssignModal('${task.id}')">
+                                <i class="fas fa-user-plus"></i> Assign
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            });
+
+            pendingTasksList.innerHTML = html;
+        } catch (error) {
+            console.error('Error loading pending tasks:', error);
+            document.getElementById('pendingTasksList').innerHTML = '<div class="alert alert-danger">Error loading pending tasks</div>';
+        }
+    }
+
+    async function loadVerifiers() {
+        try {
+            // Mock data - replace with actual API call
+            const verifiers = [
+                { id: '1', name: 'Alice Brown', currentTasks: 3, specialization: 'Universities' },
+                { id: '2', name: 'Charlie Wilson', currentTasks: 1, specialization: 'Colleges' },
+                { id: '3', name: 'Diana Lee', currentTasks: 5, specialization: 'International' }
+            ];
+
+            const verifiersList = document.getElementById('verifiersList');
+            const verifierSelect = document.getElementById('selectedVerifier');
+
+            let html = '';
+            verifierSelect.innerHTML = '<option value="">Select a verifier...</option>';
+
+            verifiers.forEach(verifier => {
+                html += `
+                <div class="card mb-2">
+                    <div class="card-body py-2">
+                        <h6 class="mb-1">${verifier.name}</h6>
+                        <small class="text-muted">Specialization: ${verifier.specialization}</small>
+                        <br>
+                        <small class="text-muted">Current Tasks: ${verifier.currentTasks}</small>
+                    </div>
+                </div>
+            `;
+
+                const option = document.createElement('option');
+                option.value = verifier.id;
+                option.textContent = `${verifier.name} (${verifier.specialization}) - ${verifier.currentTasks} tasks`;
+                verifierSelect.appendChild(option);
+            });
+
+            verifiersList.innerHTML = html || '<p class="text-muted">No verifiers available</p>';
+        } catch (error) {
+            console.error('Error loading verifiers:', error);
+            document.getElementById('verifiersList').innerHTML = '<div class="alert alert-danger">Error loading verifiers</div>';
+        }
+    }
+
+    async function loadAssignedTasks() {
+        try {
+            // Mock data - replace with actual API call
+            const assignedTasks = [
+                { id: '101', applicant: 'Mike Davis', verifier: 'Alice Brown', assigned: '2024-01-10', due: '2024-01-20', status: 'in-progress' },
+                { id: '102', applicant: 'Sarah Miller', verifier: 'Charlie Wilson', assigned: '2024-01-12', due: '2024-01-22', status: 'pending' }
+            ];
+
+            const assignedTasksList = document.getElementById('assignedTasksList');
+
+            if (assignedTasks.length === 0) {
+                assignedTasksList.innerHTML = '<p class="text-muted">No assigned tasks</p>';
+                return;
+            }
+
+            let html = `
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Verifier</th>
+                            <th>Assigned</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+            assignedTasks.forEach(task => {
+                const statusBadge = task.status === 'in-progress' ? 'bg-warning' :
+                    task.status === 'completed' ? 'bg-success' : 'bg-secondary';
+                const statusText = task.status === 'in-progress' ? 'In Progress' :
+                    task.status === 'completed' ? 'Completed' : 'Pending';
+
+                html += `
+                <tr>
+                    <td>${task.applicant}</td>
+                    <td>${task.verifier}</td>
+                    <td>${task.assigned}</td>
+                    <td>${task.due}</td>
+                    <td><span class="badge ${statusBadge}">${statusText}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="reassignTask('${task.id}')">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-info" onclick="viewTaskDetails('${task.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+            assignedTasksList.innerHTML = html;
+        } catch (error) {
+            console.error('Error loading assigned tasks:', error);
+            document.getElementById('assignedTasksList').innerHTML = '<div class="alert alert-danger">Error loading assigned tasks</div>';
+        }
+    }
+
+    function showAssignModal(taskId) {
+        const modal = new bootstrap.Modal(document.getElementById('assignTaskModal'));
+        document.getElementById('taskId').value = taskId;
+        modal.show();
+    }
+
+    async function assignTask() {
+        const taskId = document.getElementById('taskId').value;
+        const verifierId = document.getElementById('selectedVerifier').value;
+        const priority = document.getElementById('priority').value;
+        const dueDate = document.getElementById('dueDate').value;
+        const instructions = document.getElementById('instructions').value;
+
+        if (!verifierId) {
+            alert('Please select a verifier');
+            return;
+        }
+
+        try {
+            // Mock API call - replace with actual implementation
+            console.log('Assigning task:', { taskId, verifierId, priority, dueDate, instructions });
+
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            bootstrap.Modal.getInstance(document.getElementById('assignTaskModal')).hide();
+
+            // Reload data
+            loadVerificationData();
+
+            // Show success message
+            alert('Task assigned successfully!');
+
+        } catch (error) {
+            console.error('Error assigning task:', error);
+            alert('Error assigning task');
+        }
+    }
+
+    function reassignTask(taskId) {
+        // Implementation for reassigning task
+        console.log('Reassigning task:', taskId);
+        alert('Reassign functionality to be implemented');
+    }
+
+    function viewTaskDetails(taskId) {
+        // Implementation for viewing task details
+        console.log('Viewing task details:', taskId);
+        alert('Task details view to be implemented');
+    }
+</script>

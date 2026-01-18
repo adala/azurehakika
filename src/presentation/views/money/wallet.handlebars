@@ -1,0 +1,183 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-wallet me-2"></i>My Wallet
+                </h1>
+                <a href="/dashboard/add-funds" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Funds
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Balance Card -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Current Balance</h5>
+                            <h2 class="mb-0" id="walletBalance">Loading...</h2>
+                            <p class="card-text">Available for verification payments</p>
+                        </div>
+                        <div class="display-4">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Transactions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTable">
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadWalletBalance();
+    loadTransactions();
+});
+
+async function loadWalletBalance() {
+    try {
+        const response = await fetch('/api/wallet/balance', {
+            headers: {
+                'Authorization': 'Bearer ' + getAuthToken(),
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to load wallet balance');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('walletBalance').textContent = 
+                formatCurrency(result.data.balance, result.data.currency || 'USD');
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('Error loading wallet balance:', error);
+        document.getElementById('walletBalance').textContent = 'Error loading balance';
+    }
+}
+
+async function loadTransactions() {
+    try {
+        // Mock transactions data - replace with actual API call
+        const transactions = [
+            {
+                id: '1',
+                date: '2024-01-15',
+                description: 'Funds added via Mobile Money',
+                amount: 50.00,
+                currency: 'USD',
+                status: 'completed',
+                reference: 'MOMO_123456'
+            },
+            {
+                id: '2',
+                date: '2024-01-10',
+                description: 'Verification payment',
+                amount: -10.00,
+                currency: 'USD',
+                status: 'completed',
+                reference: 'VERIFY_789'
+            }
+        ];
+        
+        const tableBody = document.getElementById('transactionsTable');
+        
+        if (transactions.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No transactions found</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        
+        transactions.forEach(transaction => {
+            const amountClass = transaction.amount >= 0 ? 'text-success' : 'text-danger';
+            const amountSign = transaction.amount >= 0 ? '+' : '';
+            const statusBadge = transaction.status === 'completed' ? 'bg-success' :
+                              transaction.status === 'pending' ? 'bg-warning' : 'bg-secondary';
+            const statusText = transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1);
+            
+            html += `
+                <tr>
+                    <td>${transaction.date}</td>
+                    <td>${transaction.description}</td>
+                    <td class="${amountClass} fw-bold">
+                        ${amountSign}${formatCurrency(transaction.amount, transaction.currency)}
+                    </td>
+                    <td>
+                        <span class="badge ${statusBadge}">${statusText}</span>
+                    </td>
+                    <td>
+                        <small class="text-muted">${transaction.reference}</small>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tableBody.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+        document.getElementById('transactionsTable').innerHTML = 
+            '<tr><td colspan="5" class="text-center py-4 text-danger">Error loading transactions</td></tr>';
+    }
+}
+
+function formatCurrency(amount, currency = 'USD') {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency
+    }).format(amount);
+}
+
+function getAuthToken() {
+    // This should be implemented based on your authentication system
+    // Could be from localStorage, session, or a meta tag
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
+</script>

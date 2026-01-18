@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .login-card {
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container d-flex align-items-center justify-content-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card login-card">
+                        <div class="card-header login-header text-center py-4">
+                            <h1 class="h3 mb-0">
+                                <i class="fas fa-graduation-cap me-2"></i>
+                                AcademicVerify System
+                            </h1>
+                            <p class="mb-0 mt-2 opacity-75">System Administration Portal</p>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">
+                                        <i class="fas fa-user me-1"></i> Username
+                                    </label>
+                                    <input type="text" class="form-control" id="username" name="username" 
+                                           required autofocus>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">
+                                        <i class="fas fa-lock me-1"></i> Password
+                                    </label>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           required>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
+                                        <i class="fas fa-sign-in-alt me-2"></i> Login
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-3 text-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Use your system credentials to access the portal
+                                    </small>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4 text-white">
+                        <small>
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Secure System Access &copy; {{currentYear}} AcademicVerify
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast for messages -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="errorToastMessage"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const originalText = loginBtn.innerHTML;
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Logging in...';
+            
+            const formData = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+            
+            try {
+                const response = await fetch('/system/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Redirect to appropriate page
+                    window.location.href = result.redirect;
+                } else {
+                    showErrorToast(result.message);
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                showErrorToast('Network error. Please try again.');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = originalText;
+            }
+        });
+        
+        function showErrorToast(message) {
+            const toastEl = document.getElementById('errorToast');
+            const toastBody = document.getElementById('errorToastMessage');
+            toastBody.textContent = message;
+            const toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+            toast.show();
+        }
+        
+        // Get current year for copyright
+        document.querySelector('.text-center small').innerHTML = 
+            document.querySelector('.text-center small').innerHTML.replace('{{currentYear}}', new Date().getFullYear());
+    </script>
+</body>
+</html>

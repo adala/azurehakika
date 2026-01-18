@@ -1,0 +1,431 @@
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 mb-2">Manual Verification Entry</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="/assignee/dashboard">Dashboard</a>
+                                    </li>
+                                    <li class="breadcrumb-item active">Manual Entry</li>
+                                </ol>
+                            </nav>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-success fs-6 p-2">
+                                <i class="fas fa-university me-1"></i>
+                                {{institution.name}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-graduate me-2"></i>Student Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="label">Reference Number</span>
+                                    <span class="value">{{verification.referenceNumber}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Student Name</span>
+                                    <span class="value">{{verification.firstName}} {{verification.lastName}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Student ID</span>
+                                    <span class="value">{{verification.studentId}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Date of Birth</span>
+                                    <span class="value">{{verification.dateOfBirth}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Course</span>
+                                    <span class="value">{{verification.courseName}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Degree Type</span>
+                                    <span class="value">{{verification.degreeType}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Graduation Year</span>
+                                    <span class="value">{{verification.graduationYear}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-clipboard-check me-2"></i>Assignment Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="label">Assigned Date</span>
+                                    <span class="value">{{formatDate assignment.assignedAt}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Due Date</span>
+                                    <span class="value">{{formatDate assignment.dueDate}}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Priority</span>
+                                    <span class="value">
+                                        <span class="badge bg-{{priorityColor assignment.priority}}">
+                                            {{assignment.priority}}
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">Processing Type</span>
+                                    <span class="value">Manual Entry</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manual Entry Form -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Verification Data Entry
+                    </h5>
+                </div>
+                <form id="manualEntryForm" onsubmit="submitManualEntry(event)">
+                    <div class="card-body">
+                        <input type="hidden" name="assignmentId" value="{{assignment.id}}">
+
+                        <!-- Verification Result -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Verification Result</label>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="data[studentVerified]"
+                                            id="verifiedTrue" value="true" required>
+                                        <label class="form-check-label text-success" for="verifiedTrue">
+                                            <i class="fas fa-check-circle me-1"></i> Verified
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="data[studentVerified]"
+                                            id="verifiedFalse" value="false">
+                                        <label class="form-check-label text-danger" for="verifiedFalse">
+                                            <i class="fas fa-times-circle me-1"></i> Not Verified
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Verification Score (%)</label>
+                                    <input type="number" name="verificationScore" class="form-control" min="0" max="100"
+                                        value="0" required>
+                                    <div class="form-text">
+                                        Score based on data match accuracy
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Information -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Degree Awarded</label>
+                                    <input type="text" name="data[degree]" class="form-control"
+                                        value="{{verification.degreeType}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Major/Field of Study</label>
+                                    <input type="text" name="data[major]" class="form-control"
+                                        value="{{verification.courseName}}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Graduation Date</label>
+                                    <input type="date" name="data[graduationDate]" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">GPA/Class</label>
+                                    <input type="text" name="data[gpa]" class="form-control"
+                                        placeholder="e.g., 3.8 or First Class">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verification Method -->
+                        <div class="mb-3">
+                            <label class="form-label">Verification Method</label>
+                            <select name="data[verificationMethod]" class="form-select">
+                                <option value="manual_records_check">Manual Records Check</option>
+                                <option value="database_lookup">Database Lookup</option>
+                                <option value="document_verification">Document Verification</option>
+                                <option value="official_transcript">Official Transcript</option>
+                                <option value="diploma_verification">Diploma Verification</option>
+                            </select>
+                        </div>
+
+                        <!-- Status Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Verification Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="completed">Completed</option>
+                                <option value="requires_review">Requires Review</option>
+                                <option value="discrepancy">Discrepancy Found</option>
+                            </select>
+                        </div>
+
+                        <!-- Flags -->
+                        <div class="mb-3">
+                            <label class="form-label">Flags (Select all that apply)</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="flags[]"
+                                            value="name_mismatch">
+                                        <label class="form-check-label">Name Mismatch</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="flags[]"
+                                            value="id_mismatch">
+                                        <label class="form-check-label">ID Mismatch</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="flags[]"
+                                            value="date_discrepancy">
+                                        <label class="form-check-label">Date Discrepancy</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="flags[]"
+                                            value="incomplete_records">
+                                        <label class="form-check-label">Incomplete Records</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="flags[]"
+                                            value="requires_documentation">
+                                        <label class="form-check-label">Requires Documentation</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea name="notes" class="form-control" rows="3"
+                                placeholder="Enter any additional notes or observations..."></textarea>
+                        </div>
+
+                        <!-- Entry Duration (auto-calculated) -->
+                        <input type="hidden" name="entryDuration" id="entryDuration" value="0">
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a href="/assignee/dashboard" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                            </a>
+                            <div>
+                                <button type="reset" class="btn btn-outline-danger me-2">
+                                    <i class="fas fa-redo me-1"></i>Reset
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check-circle me-1"></i>Submit Verification
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="successToast" class="toast" role="alert">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="successToastMessage"></div>
+    </div>
+    <div id="errorToast" class="toast" role="alert">
+        <div class="toast-header bg-danger text-white">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="errorToastMessage"></div>
+    </div>
+</div>
+
+<script>
+    let startTime = Date.now();
+
+    // Update entry duration every minute
+    setInterval(() => {
+        const duration = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('entryDuration').value = duration;
+    }, 60000);
+
+    async function submitManualEntry(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+
+        // Convert form data to JSON
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            if (key.endsWith('[]')) {
+                const cleanKey = key.slice(0, -2);
+                if (!data[cleanKey]) data[cleanKey] = [];
+                data[cleanKey].push(value);
+            } else {
+                data[key] = value;
+            }
+        }
+
+        // Structure the data properly
+        const structuredData = {
+            verificationScore: parseInt(data.verificationScore),
+            status: data.status,
+            notes: data.notes,
+            flags: data.flags || [],
+            entryDuration: parseInt(data.entryDuration),
+            data: {
+                studentVerified: data['data[studentVerified]'] === 'true',
+                degree: data['data[degree]'],
+                major: data['data[major]'],
+                graduationDate: data['data[graduationDate]'],
+                gpa: data['data[gpa]'],
+                verificationMethod: data['data[verificationMethod]']
+            }
+        };
+
+        try {
+            const response = await fetch(`/assignee/assignments/${data.assignmentId}/manual-entry`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(structuredData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('success', 'Verification submitted successfully!');
+
+                // Redirect to dashboard after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/assignee/dashboard';
+                }, 2000);
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            showToast('error', 'Error: ' + error.message);
+        }
+    }
+
+    function showToast(type, message) {
+        const toastId = type === 'success' ? 'successToast' : 'errorToast';
+        const toastElement = document.getElementById(toastId);
+        const toastBody = document.getElementById(`${toastId}Message`);
+
+        toastBody.textContent = message;
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
+</script>
+
+<style>
+    .info-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f3f5;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-item .label {
+        font-weight: 500;
+        color: #6c757d;
+    }
+
+    .info-item .value {
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .form-check-input:checked {
+        background-color: #198754;
+        border-color: #198754;
+    }
+
+    .btn-success {
+        background-color: #198754;
+        border-color: #198754;
+    }
+
+    .btn-success:hover {
+        background-color: #157347;
+        border-color: #146c43;
+    }
+</style>

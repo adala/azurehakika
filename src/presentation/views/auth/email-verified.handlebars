@@ -1,0 +1,110 @@
+<!-- Success Content -->
+<div class="verification-success-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body text-center p-5">
+                        <!-- Success Icon -->
+                        <div class="success-icon mb-4">
+                            <i class="fas fa-check fa-3x"></i>
+                        </div>
+
+                        <!-- Success Title -->
+                        <h1 class="display-5 fw-bold text-success mb-3">Email Verified Successfully!</h1>
+
+                        <!-- Success Message -->
+                        <div class="success-message mb-4">
+                            <p class="lead text-muted">
+                                Congratulations! Your email has been verified and your account is now fully
+                                activated.
+                            </p>
+                            <div class="alert alert-success border-0 mt-4">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-user-check me-2"></i>Account Status: Active
+                                </h5>
+                                <p class="mb-0">You now have full access to all AcademicVerify features.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .verification-success-page {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .success-icon {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 15px rgba(40, 167, 69, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+        }
+    }
+
+    .card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .btn {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 12px 24px;
+    }
+
+    .feature-card {
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .progress-bar {
+        height: 8px;
+        border-radius: 4px;
+    }
+</style>

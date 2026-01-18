@@ -1,0 +1,387 @@
+<div class="pricing-page">
+    <!-- Hero Section -->
+    <section class="hero-section bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">Simple, Transparent Pricing</h1>
+                    <p class="lead mb-4">
+                        Choose the plan that works best for your organization.
+                        All plans include our AI-powered verification technology.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-primary">No hidden fees</span>
+                        <span class="badge bg-success">Cancel anytime</span>
+                        <span class="badge bg-info">Volume discounts</span>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <img src="/images/pricing-illustration.svg" alt="Pricing" class="img-fluid"
+                            style="max-height: 300px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Plans -->
+    <section class="pricing-plans py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <!-- Starter Plan -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card pricing-card h-100">
+                        <div class="card-header text-center py-4">
+                            <h3 class="h4">Starter</h3>
+                            <div class="price">
+                                <span class="currency">$</span>
+                                <span class="amount">15</span>
+                                <span class="period">/verification</span>
+                            </div>
+                            <p class="text-muted mb-0">Pay as you go</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Up to 10 verifications/month
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Standard processing (3-5 days)
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Basic verification reports
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Email support
+                                </li>
+                                <li class="mb-3 text-muted">
+                                    <i class="fas fa-times me-2"></i>
+                                    Bulk verification
+                                </li>
+                                <li class="mb-3 text-muted">
+                                    <i class="fas fa-times me-2"></i>
+                                    Priority processing
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent text-center py-4">
+                            {{#if user}}
+                            <a href="/verifications/new" class="btn btn-outline-primary w-100">Start Verifying</a>
+                            {{else}}
+                            <a href="/register" class="btn btn-outline-primary w-100">Get Started</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Plan -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card pricing-card featured h-100">
+                        <div class="card-header text-center py-4 bg-primary text-white">
+                            <span class="badge bg-warning position-absolute top-0 start-50 translate-middle px-3">Most
+                                Popular</span>
+                            <h3 class="h4">Professional</h3>
+                            <div class="price">
+                                <span class="currency">$</span>
+                                <span class="amount">12</span>
+                                <span class="period">/verification</span>
+                            </div>
+                            <p class="mb-0">$120 monthly for 10 verifications</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Up to 50 verifications/month
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Faster processing (24-48 hours)
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Detailed verification reports
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Priority email & chat support
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Basic bulk verification (up to 100)
+                                </li>
+                                <li class="mb-3 text-muted">
+                                    <i class="fas fa-times me-2"></i>
+                                    API access
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent text-center py-4">
+                            {{#if user}}
+                            <a href="/dashboard" class="btn btn-primary w-100">Upgrade Now</a>
+                            {{else}}
+                            <a href="/register" class="btn btn-primary w-100">Start Free Trial</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card pricing-card h-100">
+                        <div class="card-header text-center py-4">
+                            <h3 class="h4">Enterprise</h3>
+                            <div class="price">
+                                <span class="currency">$</span>
+                                <span class="amount">8</span>
+                                <span class="period">/verification</span>
+                            </div>
+                            <p class="text-muted mb-0">Custom pricing for volume</p>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-4">
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Unlimited verifications
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Same-day processing
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Comprehensive reports & analytics
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    24/7 dedicated support
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Advanced bulk verification
+                                </li>
+                                <li class="mb-3">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Full API access
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-transparent text-center py-4">
+                            <a href="/contact" class="btn btn-outline-primary w-100">Contact Sales</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Comparison -->
+    <section class="features-comparison py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Compare Plans</h2>
+                    <p class="section-subtitle">Detailed feature comparison across all plans</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Starter</th>
+                                    <th>Professional</th>
+                                    <th>Enterprise</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Price per verification</td>
+                                    <td>$15</td>
+                                    <td>$12</td>
+                                    <td>$8</td>
+                                </tr>
+                                <tr>
+                                    <td>Monthly verifications included</td>
+                                    <td>10</td>
+                                    <td>50</td>
+                                    <td>Unlimited</td>
+                                </tr>
+                                <tr>
+                                    <td>Processing time</td>
+                                    <td>3-5 days</td>
+                                    <td>24-48 hours</td>
+                                    <td>Same day</td>
+                                </tr>
+                                <tr>
+                                    <td>Bulk verification</td>
+                                    <td><i class="fas fa-times text-danger"></i></td>
+                                    <td>Up to 100 records</td>
+                                    <td>Unlimited</td>
+                                </tr>
+                                <tr>
+                                    <td>API access</td>
+                                    <td><i class="fas fa-times text-danger"></i></td>
+                                    <td><i class="fas fa-times text-danger"></i></td>
+                                    <td><i class="fas fa-check text-success"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Advanced analytics</td>
+                                    <td><i class="fas fa-times text-danger"></i></td>
+                                    <td>Basic</td>
+                                    <td>Comprehensive</td>
+                                </tr>
+                                <tr>
+                                    <td>Support</td>
+                                    <td>Email</td>
+                                    <td>Priority email & chat</td>
+                                    <td>24/7 dedicated</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion" id="pricingFAQ">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq1">
+                                    Can I change plans later?
+                                </button>
+                            </h3>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pricingFAQ">
+                                <div class="accordion-body">
+                                    Yes, you can upgrade or downgrade your plan at any time. Changes take effect
+                                    immediately, and we'll prorate any differences in billing.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq2">
+                                    Is there a free trial?
+                                </button>
+                            </h3>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                                <div class="accordion-body">
+                                    We offer a 14-day free trial for the Professional plan that includes 5 free
+                                    verifications. No credit card required to start.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq3">
+                                    What payment methods do you accept?
+                                </button>
+                            </h3>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                                <div class="accordion-body">
+                                    We accept all major credit cards, mobile money (Momo), and bank transfers for
+                                    enterprise customers.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq4">
+                                    Do you offer discounts for educational institutions?
+                                </button>
+                            </h3>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                                <div class="accordion-body">
+                                    Yes, we offer special pricing for educational institutions and non-profit
+                                    organizations. Contact our sales team for more information.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .pricing-card {
+        transition: transform 0.3s ease;
+        border: 2px solid #e9ecef;
+    }
+
+    .pricing-card.featured {
+        border-color: #007bff;
+        transform: scale(1.05);
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .pricing-card.featured:hover {
+        transform: scale(1.05) translateY(-5px);
+    }
+
+    .price {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 1rem 0;
+    }
+
+    .price .currency {
+        font-size: 1.5rem;
+        vertical-align: super;
+    }
+
+    .price .period {
+        font-size: 1rem;
+        color: #6c757d;
+        font-weight: normal;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        color: #007bff;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .section-subtitle {
+        font-size: 1.2rem;
+        color: #6c757d;
+    }
+
+    .table th {
+        font-weight: 600;
+        background-color: #f8f9fa;
+    }
+</style>

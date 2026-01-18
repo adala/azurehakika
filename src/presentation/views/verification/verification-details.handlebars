@@ -1,0 +1,1006 @@
+{{! verification-details.handlebars - For use within main layout }}
+<div class="verification-details-page">
+    <!-- Header with Actions -->
+    <div class="page-header mb-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-file-alt text-primary me-3 fs-2"></i>
+                    <div>
+                        <h1 class="mb-1">Verification Report</h1>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge bg-light text-dark border">
+                                <i class="fas fa-hashtag me-1"></i> {{data.referenceNumber}}
+                            </span>
+                            <span class="status-badge status-{{data.status}}">
+                                {{data.status}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-calendar me-1"></i> Created: {{formatDate data.createdAt}}
+                </p>
+            </div>
+            <div class="action-buttons">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-primary px-4" id="generatePDFBtn">
+                        <i class="fas fa-file-pdf me-2"></i>PDF Report
+                    </button>
+                    <button class="btn btn-outline-primary" id="printReportBtn">
+                        <i class="fas fa-print me-2"></i>Print
+                    </button>
+                    <button class="btn btn-outline-secondary" id="exportDataBtn">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Left Column - Details -->
+        <div class="col-lg-8">
+            <!-- Verification Status Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Verification Status</h5>
+                    <span class="fw-semibold" id="verificationScore">{{data.verification.verificationScore}}%
+                        Match</span>
+                </div>
+                <div class="card-body">
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Data Accuracy Score</span>
+                            <span id="scoreValue">{{data.verification.verificationScore}}%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                style="width: {{data.verification.verificationScore}}%"
+                                aria-valuenow="{{data.verification.verificationScore}}" aria-valuemin="0"
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Timeline -->
+                    <div class="timeline">
+                        <div class="timeline-item {{#if (gt data.status 'pending')}}completed{{/if}}">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Submitted</h6>
+                                <small>{{formatDate data.createdAt}}</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item {{#if (gt data.status 'processing')}}completed{{/if}}">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Processing</h6>
+                                <small>{{formatDate data.updatedAt}}</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item {{#if (eq data.status 'completed')}}completed{{/if}}">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Completed</h6>
+                                <small>{{#if (eq data.status 'completed')}}{{formatDate
+                                    data.updatedAt}}{{else}}Pending{{/if}}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Comparison Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-balance-scale me-2 text-primary"></i>Data Comparison</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Field</th>
+                                    <th>Submitted Data</th>
+                                    <th>Institution Data</th>
+                                    <th>Match</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonData">
+                                {{#if data.verification}}
+                                {{#with data.verification.responseData}}
+                                <!-- Student Name -->
+                                <tr>
+                                    <td><strong>Student Name</strong></td>
+                                    <td>{{../data.firstName}} {{../data.lastName}}</td>
+                                    <td>{{studentName}}</td>
+                                    <td>
+                                        <span
+                                            class="match-badge {{#if (lookup dataPoints 'name_match')}}match-true{{else}}match-false{{/if}}">
+                                            <i
+                                                class="fas fa-{{#if (lookup dataPoints 'name_match')}}check{{else}}times{{/if}} me-1"></i>
+                                            {{#if (lookup dataPoints 'name_match')}}MATCH{{else}}NO MATCH{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="confidence-meter">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {{confidenceClass dataPoints.name_confidence}}"
+                                                    style="width: {{dataPoints.name_confidence}}%"></div>
+                                            </div>
+                                            <small>{{dataPoints.name_confidence}}%</small>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Student ID -->
+                                <tr>
+                                    <td><strong>Student ID</strong></td>
+                                    <td>{{../data.studentId}}</td>
+                                    <td>{{studentId}}</td>
+                                    <td>
+                                        <span class="match-badge {{#if (lookup dataPoints "
+                                            studentId_match")}}match-true{{else}}match-false{{/if}}">
+                                            <i class="fas fa-{{#if (lookup dataPoints "
+                                                studentId_match")}}check{{else}}times{{/if}} me-1"></i>
+                                            {{#if (lookup dataPoints "studentId_match")}}MATCH{{else}}NO MATCH{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="confidence-meter">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {{confidenceClass dataPoints.studentId_confidence}}"
+                                                    style="width: {{dataPoints.studentId_confidence}}%"></div>
+                                            </div>
+                                            <small>{{dataPoints.studentId_confidence}}%</small>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Course Name -->
+                                <tr>
+                                    <td><strong>Course Name</strong></td>
+                                    <td>{{../data.courseName}}</td>
+                                    <td>{{courseName}}</td>
+                                    <td>
+                                        <span
+                                            class="match-badge {{#if (lookup dataPoints 'courseName_match')}}match-true{{else}}match-false{{/if}}">
+                                            <i
+                                                class="fas fa-{{#if (lookup dataPoints 'courseName_match')}}check{{else}}times{{/if}} me-1"></i>
+                                            {{#if (lookup dataPoints 'courseName_match')}}MATCH{{else}}NO MATCH{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="confidence-meter">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {{confidenceClass dataPoints.courseName_confidence}}"
+                                                    style="width: {{dataPoints.courseName_confidence}}%"></div>
+                                            </div>
+                                            <small>{{dataPoints.courseName_confidence}}%</small>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Degree Type -->
+                                <tr>
+                                    <td><strong>Degree Type</strong></td>
+                                    <td>{{../data.degreeType}}</td>
+                                    <td>{{degreeType}}</td>
+                                    <td>
+                                        <span
+                                            class="match-badge {{#if (lookup dataPoints 'degreeType_match')}}match-true{{else}}match-false{{/if}}">
+                                            <i
+                                                class="fas fa-{{#if (lookup dataPoints 'degreeType_match')}}check{{else}}times{{/if}} me-1"></i>
+                                            {{#if (lookup dataPoints 'degreeType_match')}}MATCH{{else}}NO MATCH{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="confidence-meter">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {{confidenceClass dataPoints.degreeType_confidence}}"
+                                                    style="width: {{dataPoints.degreeType_confidence}}%"></div>
+                                            </div>
+                                            <small>{{dataPoints.degreeType_confidence}}%</small>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Classification -->
+                                <tr>
+                                    <td><strong>Classification</strong></td>
+                                    <td>{{../data.classification}}</td>
+                                    <td>{{classification}}</td>
+                                    <td>
+                                        <span
+                                            class="match-badge {{#if (lookup dataPoints 'classification_match')}}match-true{{else}}match-false{{/if}}">
+                                            <i
+                                                class="fas fa-{{#if (lookup dataPoints 'classification_match')}}check{{else}}times{{/if}} me-1"></i>
+                                            {{#if (lookup dataPoints 'classification_match')}}MATCH{{else}}NO
+                                            MATCH{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="confidence-meter">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {{confidenceClass dataPoints.classification_confidence}}"
+                                                    style="width: {{dataPoints.classification_confidence}}%"></div>
+                                            </div>
+                                            <small>{{dataPoints.classification_confidence}}%</small>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Graduation Year -->
+                                <tr>
+                                    <td><strong>Graduation Year</strong></td>
+                                    <td>{{../data.graduationYear}}</td>
+                                    <td>{{graduationYear}}</td>
+                                    <td>
+                                        <span
+                                            class="match-badge {{#if (lookup dataPoints 'graduationYear_match')}}match-true{{else}}match-false{{/if}}">
+                                            <i
+                                                class="fas fa-{{#if (lookup dataPoints 'graduationYear_match')}}check{{else}}times{{/if}} me-1"></i>
+                                            {{#if (lookup dataPoints 'graduationYear_match')}}MATCH{{else}}NO
+                                            MATCH{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="confidence-meter">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {{confidenceClass dataPoints.graduationYear_confidence}}"
+                                                    style="width: {{dataPoints.graduationYear_confidence}}%"></div>
+                                            </div>
+                                            <small>{{dataPoints.graduationYear_confidence}}%</small>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Student Verified -->
+                                <tr>
+                                    <td><strong>Student Verified</strong></td>
+                                    <td>Submitted for verification</td>
+                                    <td>
+                                        {{#if studentVerified}}
+                                        <span class="text-success"><i class="fas fa-check-circle"></i> Verified</span>
+                                        {{else}}
+                                        <span class="text-danger"><i class="fas fa-times-circle"></i> Not
+                                            Verified</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="match-badge {{#if studentVerified}}match-true{{else}}match-false{{/if}}">
+                                            <i class="fas fa-{{#if studentVerified}}check{{else}}times{{/if}} me-1"></i>
+                                            {{#if studentVerified}}MATCH{{else}}NO MATCH{{/if}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="confidence-meter">
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar {{#if studentVerified}}bg-success{{else}}bg-danger{{/if}}"
+                                                    style="width: {{#if studentVerified}}100{{else}}0{{/if}}%"></div>
+                                            </div>
+                                            <small>{{#if studentVerified}}100{{else}}0{{/if}}%</small>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/with}}
+                                {{else}}
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <div class="alert alert-info m-0">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Awaiting response from institution
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/if}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Institution Response -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-university me-2 text-primary"></i>Institution Response</h5>
+                    {{#if institutionResponse}}
+                    <span class="badge bg-{{responseStatusBadge data.verification.status}} float-end">
+                        {{data.verification.status}}
+                    </span>
+                    {{/if}}
+                </div>
+                <div class="card-body">
+                    <div class="response-content" id="institutionResponse">
+                        {{#if data.verification}}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-grid mb-4">
+                                    <div class="info-item">
+                                        <span class="label">Verification Score</span>
+                                        <span class="value">{{data.verification.verificationScore}}%</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Response Type</span>
+                                        <span class="value">{{data.verification.responseType}}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Processed At</span>
+                                        <span class="value">{{formatDate data.verification.processedAt}}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Response Time</span>
+                                        <span class="value">{{data.verification.responseTime}} ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                {{#if data.verification.isVerified}}
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    <strong>Verified by Institution</strong><br>
+                                    <small>Confidence: {{data.verification.confidenceScore}}%</small>
+                                </div>
+                                {{/if}}
+                                {{#if data.verification.notes}}
+                                <div class="alert alert-light">
+                                    <i class="fas fa-sticky-note"></i>
+                                    <strong>Notes:</strong> {{data.verification.notes}}
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        {{#if data.verification.flags.length}}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-flag"></i>
+                            <strong>Flags:</strong>
+                            {{#each data.verification.flags}}
+                            <span class="badge bg-warning me-1">{{this}}</span>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                        {{else}}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Awaiting response from institution
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Sidebar -->
+        <div class="col-lg-4">
+            <!-- Student Information -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-user-graduate me-2 text-primary"></i>Student Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Full Name</span>
+                            <span class="value">{{data.firstName}} {{data.lastName}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Date of Birth</span>
+                            <span class="value">{{data.dateOfBirth}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Student ID</span>
+                            <span class="value">{{data.studentId}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Course</span>
+                            <span class="value">{{data.courseName}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Degree Type</span>
+                            <span class="value">{{data.degreeType}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Classification</span>
+                            <span class="value">{{data.classification}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Graduation Year</span>
+                            <span class="value">{{data.graduationYear}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Institution Details -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-university me-2 text-primary"></i>Institution</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-3">
+                        {{#if data.Institution.logo}}
+                        <img src="{{data.Institution.logo}}" alt="{{data.Institution.name}}"
+                            class="institution-logo me-3">
+                        {{/if}}
+                        <div>
+                            <h6 class="mb-1">{{data.Institution.name}}</h6>
+                            <small class="text-muted">{{data.Institution.country}}</small>
+                        </div>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Verification Fee</span>
+                            <span class="value">${{data.fee}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Process</span>
+                            <span class="value">{{data.process}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Processing Time</span>
+                            <span class="value">{{data.Institution.processingTime}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verification Actions -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-cogs me-2 text-primary"></i>Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" id="recheckBtn">
+                            <i class="fas fa-redo me-2"></i>Request Re-check
+                        </button>
+                        <button class="btn btn-outline-secondary" id="contactBtn">
+                            <i class="fas fa-envelope me-2"></i>Contact Institution
+                        </button>
+                        <button class="btn btn-outline-info" id="shareBtn">
+                            <i class="fas fa-share-alt me-2"></i>Share Report
+                        </button>
+                        {{#if (eq data.status 'completed')}}
+                        <button class="btn btn-success" id="certificateBtn">
+                            <i class="fas fa-award me-2"></i>Download Certificate
+                        </button>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="successToast" class="toast" role="alert">
+        <div class="toast-header bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="successToastMessage"></div>
+    </div>
+    <div id="errorToast" class="toast" role="alert">
+        <div class="toast-header bg-danger text-white">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="errorToastMessage"></div>
+    </div>
+</div>
+
+<script>
+    // Report Service
+    const ReportService = {
+        async generatePDF(verificationId) {
+            if (!AuthService.isAuthenticated()) {
+                AuthService.redirectToLogin();
+                return;
+            }
+
+            const token = AuthService.getToken();
+            const url = `/reports/verifications/${verificationId}/pdf`;
+
+            try {
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/pdf'
+                    }
+                });
+
+                if (response.status === 401) {
+                    AuthService.redirectToLogin();
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `Failed to generate PDF: ${response.statusText}`);
+                }
+
+                // Get filename from Content-Disposition header or use default
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = `verification-report-${verificationId}.pdf`;
+
+                if (contentDisposition) {
+                    const matches = contentDisposition.match(/filename="(.+)"/);
+                    if (matches && matches[1]) {
+                        filename = matches[1];
+                    }
+                }
+
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = `Hakika-Verification-Report-{{data.referenceNumber}}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+
+                showToast('success', 'PDF report downloaded successfully!');
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                showToast('error', 'Failed to generate PDF. Please try again.');
+            }
+        },
+
+        async printReport(verificationId) {
+            if (!AuthService.isAuthenticated()) {
+                AuthService.redirectToLogin();
+                return;
+            }
+
+            const token = AuthService.getToken();
+            const url = `/reports/verifications/${verificationId}/print`;
+
+            try {
+                showToast('info', 'Opening print preview...');
+
+                // Open print in new window with token
+                const printWindow = window.open('', '_blank');
+                if (!printWindow) {
+                    showToast('error', 'Please allow popups to print the report.');
+                    return;
+                }
+
+                // Fetch print-ready HTML with token
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'text/html'
+                    }
+                });
+
+                if (response.ok) {
+                    const html = await response.text();
+                    printWindow.document.open();
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+
+                    // Auto-print after load
+                    printWindow.onload = () => {
+                        printWindow.focus();
+                        printWindow.print();
+
+                        // Close window after print
+                        printWindow.onafterprint = () => {
+                            setTimeout(() => {
+                                printWindow.close();
+                            }, 100);
+                        };
+                    };
+                } else {
+                    printWindow.close();
+                    throw new Error('Failed to load print template');
+                }
+            } catch (error) {
+                console.error('Print error:', error);
+                showToast('error', 'Failed to prepare print. Please try the PDF option.');
+            }
+        },
+
+        async exportData() {
+            if (!AuthService.isAuthenticated()) {
+                AuthService.redirectToLogin();
+                return;
+            }
+
+            const token = AuthService.getToken();
+            const url = `/api/reports/verifications/{{data.id}}/export`;
+
+            try {
+                showToast('info', 'Preparing data export...');
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {
+                        type: 'application/json'
+                    });
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `Hakika-Verification-{{data.referenceNumber}}-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(downloadUrl);
+
+                    showToast('success', 'Data exported successfully!');
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                showToast('error', 'Failed to export data.');
+            }
+        }
+    };
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize tooltips
+        const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(tooltip => new bootstrap.Tooltip(tooltip));
+
+        // Setup event listeners
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        // PDF Report Button
+        document.getElementById('generatePDFBtn')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const button = e.target;
+            const originalText = button.innerHTML;
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating...';
+
+            try {
+                await ReportService.generatePDF('{{data.id}}');
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('error', 'Failed to generate PDF.');
+            } finally {
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }, 2000);
+            }
+        });
+
+        // Print Report Button
+        document.getElementById('printReportBtn')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const button = e.target;
+            const originalText = button.innerHTML;
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Preparing...';
+
+            try {
+                await ReportService.printReport('{{data.id}}');
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('error', 'Failed to prepare print.');
+            } finally {
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }, 2000);
+            }
+        });
+
+        // Export Data Button
+        document.getElementById('exportDataBtn')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await ReportService.exportData();
+        });
+
+        // Other buttons
+        document.getElementById('recheckBtn')?.addEventListener('click', requestRecheck);
+        document.getElementById('contactBtn')?.addEventListener('click', contactInstitution);
+        document.getElementById('shareBtn')?.addEventListener('click', shareReport);
+        document.getElementById('certificateBtn')?.addEventListener('click', downloadCertificate);
+    }
+
+    // Utility Functions
+    function showToast(type, message) {
+        const toastId = type === 'success' ? 'successToast' : 'errorToast';
+        const toastElement = document.getElementById(toastId);
+        const toastBody = document.getElementById(`${toastId}Message`);
+
+        if (toastElement && toastBody) {
+            toastBody.textContent = message;
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    }
+
+    function requestRecheck() {
+        if (confirm('Request a re-check from the institution? This may incur additional fees.')) {
+            showToast('info', 'Re-check request sent to institution.');
+        }
+    }
+
+    function contactInstitution() {
+        const subject = `Verification Inquiry: {{data.referenceNumber}}`;
+        const body = `Dear Institution,\n\nI would like to inquire about verification reference: {{data.referenceNumber}}\n\nStudent: {{verification.firstName}} {{verification.lastName}}\nStudent ID: {{verification.studentId}}\n\nThank you.`;
+        window.location.href = `mailto:{{verification.Institution.email}}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    function shareReport() {
+        const shareUrl = `${window.location.origin}/verifications/{{data.id}}/share`;
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Hakika Verification Report',
+                text: `Verification report for {{data.firstName}} {{data.lastName}}`,
+                url: shareUrl
+            });
+        } else {
+            navigator.clipboard.writeText(shareUrl)
+                .then(() => showToast('success', 'Link copied to clipboard!'))
+                .catch(() => showToast('error', 'Failed to copy link.'));
+        }
+    }
+
+    function downloadCertificate() {
+        showToast('info', 'Downloading verification certificate...');
+        window.open(`/verifications/{{data.id}}/certificate`, '_blank');
+    }
+
+    // Confidence class helper
+    function confidenceClass(confidence) {
+        if (confidence >= 90) return 'bg-success';
+        if (confidence >= 80) return 'bg-warning';
+        return 'bg-danger';
+    }
+</script>
+
+<style>
+    .verification-details-page {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #f59e0b;
+    }
+
+    .status-processing {
+        background: #dbeafe;
+        color: #3b82f6;
+    }
+
+    .status-completed {
+        background: #d1fae5;
+        color: #10b981;
+    }
+
+    .status-failed {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+    .card-header {
+        border-bottom: 1px solid #e9ecef;
+        background: #f8f9fa !important;
+        padding: 1rem 1.25rem;
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+
+    .timeline-item.completed .timeline-marker {
+        background: #10b981;
+        border-color: #10b981;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -30px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid #dee2e6;
+        background: white;
+    }
+
+    .timeline-content h6 {
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .timeline-content small {
+        color: #6c757d;
+    }
+
+    .comparison-table th {
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+        padding: 0.75rem;
+    }
+
+    .comparison-table td {
+        padding: 0.75rem;
+        vertical-align: middle;
+    }
+
+    .match-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .match-true {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .match-false {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .confidence-meter {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .confidence-meter .progress {
+        flex-grow: 1;
+        background-color: #e9ecef;
+    }
+
+    .info-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f3f5;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-item .label {
+        font-weight: 500;
+        color: #6c757d;
+    }
+
+    .info-item .value {
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .institution-logo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 8px;
+        background: white;
+        padding: 4px;
+        border: 1px solid #dee2e6;
+    }
+
+    .toast {
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .response-content pre {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+        .verification-details-page {
+            padding: 1rem;
+        }
+
+        .page-header .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .action-buttons .btn-group {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+    }
+
+    @media print {
+
+        .action-buttons,
+        .btn-group,
+        .toast-container {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+        }
+
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #dee2e6 !important;
+        }
+    }
+</style>

@@ -1,0 +1,70 @@
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    {{#if (eq status 'success')}}
+                    <i class="fas fa-check-circle text-success display-1 mb-4"></i>
+                    <h4 class="card-title text-success mb-3">Payment Successful!</h4>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check me-2"></i>
+                        {{message}}
+                    </div>
+                    {{else}}
+                    <i class="fas fa-times-circle text-danger display-1 mb-4"></i>
+                    <h4 class="card-title text-danger mb-3">Payment Failed</h4>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {{message}}
+                    </div>
+                    {{/if}}
+                    
+                    <div class="payment-details bg-light p-3 rounded mb-4">
+                        <div class="row text-start small">
+                            <div class="col-6">Reference:</div>
+                            <div class="col-6 text-end"><strong>{{reference}}</strong></div>
+                            
+                            <div class="col-6">Date:</div>
+                            <div class="col-6 text-end"><strong>{{formatDate}}</strong></div>
+                            
+                            <div class="col-6">Status:</div>
+                            <div class="col-6 text-end">
+                                <span class="badge {{if (eq status 'success') 'bg-success' 'bg-danger'}}">
+                                    {{if (eq status 'success') 'Completed' 'Failed'}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        {{#if (eq status 'success')}}
+                        <a href="/dashboard/wallet" class="btn btn-success">
+                            <i class="fas fa-wallet me-2"></i>View Wallet
+                        </a>
+                        {{else}}
+                        <a href="/dashboard/add-funds" class="btn btn-primary">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </a>
+                        {{/if}}
+                        <a href="/dashboard" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-redirect on success after 3 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const status = new URLSearchParams(window.location.search).get('status');
+    
+    if (status === 'success') {
+        setTimeout(() => {
+            window.location.href = '/dashboard/wallet';
+        }, 3000);
+    }
+});
+</script>

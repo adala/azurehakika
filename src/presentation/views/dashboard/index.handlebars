@@ -1,0 +1,874 @@
+<div class="dashboard-page">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="welcome-title">Welcome back, <span class="text-primary">{{user.firstName}}</span>! 👋</h1>
+                <p class="welcome-subtitle">Here's what's happening with your verifications today</p>
+            </div>
+            <div class="header-actions">
+                <div class="d-flex gap-2">
+                    <!-- Updated: Token authenticated link -->
+                    <button class="btn btn-primary" onclick="navigateWithTokenFetch('/api/institutions-page')">
+                        <i class="fas fa-plus-circle me-2"></i>Start Verification
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="navigateWithTokenFetch('/payments/add-funds')">
+                        <i class="fas fa-plus me-2"></i>Add Funds
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card pending">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingCount">{{dashboardData.pendingCount}}</h3>
+                        <p>Pending Verifications</p>
+                    </div>
+                </div>
+                <div class="stat-trend">
+                    <small class="text-muted">Awaiting action</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card processing">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="processingCount">{{dashboardData.processingCount}}</h3>
+                        <p>In Progress</p>
+                    </div>
+                </div>
+                <div class="stat-trend">
+                    <small class="text-muted">Currently working</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card completed">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="completedCount">{{dashboardData.completedCount}}</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+                <div class="stat-trend">
+                    <small class="text-muted">This month</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card revenue">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="walletBalanceCard">${{formatCurrency dashboardData.walletBalance}}</h3>
+                        <p>Remaining Balance</p>
+                        <small class="text-muted" id="balanceStatus">
+                            {{#if dashboardData.lowBalance}}
+                            <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Low balance</span>
+                            {{else if dashboardData.okBalance}}
+                            <span class="text-warning"><i class="fas fa-info-circle"></i> Balance OK</span>
+                            {{else}}
+                            <span class="text-success"><i class="fas fa-check-circle"></i> Good balance</span>
+                            {{/if}}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Activity Column - WIDER -->
+        <div class="col-lg-9 col-xl-10">
+            <!-- Recent Verifications Card - Enhanced -->
+            <div class="card modern-card">
+                <div class="card-header modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-list-alt me-2"></i>Recent Verifications
+                        </h5>
+                        <p class="text-muted mb-0 small">Your verification requests and their current status</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-filter me-1"></i>Filter
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="filterVerifications('all')">All</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterVerifications('pending')">Pending</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterVerifications('processing')">Processing</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="filterVerifications('completed')">Completed</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="navigateWithTokenFetch('/verification/view-all')">
+                            View All <i class="fas fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="verificationsTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Institution</th>
+                                    <th>Course/Degree</th>
+                                    <th>Reference</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Fee</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#if dashboardData.recentVerifications.length}}
+                                    {{#each dashboardData.recentVerifications}}
+                                    <tr class="verification-row" data-status="{{this.status}}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="institution-avatar me-2">
+                                                    {{#if this.institution.logo}}
+                                                    <img src="{{this.institution.logo}}" alt="{{this.institution.name}}" class="rounded-circle" style="width:32px;height:32px;object-fit:cover;">
+                                                    {{else}}
+                                                    <div class="institution-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;">
+                                                        <i class="fas fa-university"></i>
+                                                    </div>
+                                                    {{/if}}
+                                                </div>
+                                                <div class="institution-info">
+                                                    <div class="fw-semibold">{{this.institution.name}}</div>
+                                                    <small class="text-muted">{{this.studentName}}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="course-info">
+                                                <div class="fw-medium">{{this.courseName}}</div>
+                                                <div class="small text-muted">
+                                                    {{this.degreeType}}
+                                                    {{#if this.classification}} • {{formatClassification this.classification}}{{/if}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="reference-cell">
+                                                <code class="reference-number" title="{{this.referenceNumber}}">
+                                                    {{truncate this.referenceNumber 10}}
+                                                </code>
+                                                <small class="text-muted d-block">{{this.studentId}}</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="status-cell">
+                                                <span class="status-badge status-{{this.status}}">
+                                                    {{formatStatus this.status}}
+                                                </span>
+                                                {{#if this.priority}}
+                                                <br>
+                                                <small class="priority-badge priority-{{this.priority}}">
+                                                    {{this.priority}}
+                                                </small>
+                                                {{/if}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="date-cell">
+                                                <div>{{formatDateShort this.createdAt}}</div>
+                                                <small class="text-muted">{{formatTime this.createdAt}}</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fee-cell">
+                                                <div class="fw-semibold">${{formatCurrency this.fee}}</div>
+                                                <small class="text-muted">{{this.process}}</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="viewVerification('{{this.id}}')" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                {{#if this.status}}
+                                                <button class="btn btn-sm btn-outline-secondary" onclick="copyReference('{{this.referenceNumber}}')" title="Copy Reference">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                                {{/if}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                {{else}}
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                                <h5>No verifications yet</h5>
+                                                <p class="text-muted mb-3">Start your first verification to get started</p>
+                                                <button class="btn btn-primary" onclick="navigateWithTokenFetch('/api/institutions-page')">
+                                                    <i class="fas fa-plus-circle me-2"></i>Start Verification
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/if}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions - Enhanced -->
+            <div class="card modern-card mt-4">
+                <div class="card-header modern-card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-0">Recent Transactions</h5>
+                        <p class="text-muted mb-0 small">Your wallet activity and payment history</p>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary" onclick="navigateWithTokenFetch('/transactions/view-all')">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="recentTransactions" class="transactions-list">
+                        {{#if dashboardData.recentTransactions.length}}
+                            {{#each dashboardData.recentTransactions}}
+                            <div class="transaction-item d-flex justify-content-between align-items-center py-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <div class="transaction-icon me-3">
+                                        {{#if (gt this.amount 0)}}
+                                        <div class="icon-circle bg-success">
+                                            <i class="fas fa-arrow-down text-white"></i>
+                                        </div>
+                                        {{else}}
+                                        <div class="icon-circle bg-danger">
+                                            <i class="fas fa-arrow-up text-white"></i>
+                                        </div>
+                                        {{/if}}
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">{{this.description}}</div>
+                                        <div class="text-muted small">
+                                            {{formatDate this.createdAt}} • 
+                                            <span class="transaction-type">{{this.type}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-semibold {{#if (gt this.amount 0)}}text-success{{else}}text-danger{{/if}}">
+                                        {{#if (gt this.amount 0)}}+{{/if}}${{formatCurrency (abs this.amount)}}
+                                    </div>
+                                    <div class="text-muted small">
+                                        <code>{{this.reference}}</code>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/each}}
+                        {{else}}
+                            <div class="text-center py-4">
+                                <i class="fas fa-exchange-alt fa-2x text-muted mb-3"></i>
+                                <p class="text-muted mb-3">No transactions yet</p>
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Column - NARROWER -->
+        <div class="col-lg-3 col-xl-2">
+            <!-- Quick Actions Card - Compact -->
+            <div class="card modern-card compact-sidebar">
+                <div class="card-header modern-card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-bolt me-1"></i>Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <div class="d-grid gap-1">
+                        <button class="btn btn-primary btn-sm mb-1" onclick="navigateWithTokenFetch('/api/institutions-page')">
+                            <i class="fas fa-plus-circle me-1"></i>New Verification
+                        </button>
+                        {{#unless (eq user.role 'member')}}
+                        <button class="btn btn-outline-primary btn-sm mb-1" onclick="navigateWithTokenFetch('/payments/add-funds')">
+                            <i class="fas fa-plus me-1"></i>Add Funds
+                        </button>
+                        {{/unless}}
+                        {{!-- <button class="btn btn-outline-secondary btn-sm mb-1" onclick="navigateWithTokenFetch('/reports')">
+                            <i class="fas fa-chart-bar me-1"></i>Reports
+                        </button> --}}
+                        
+                        {{#unless (eq user.role 'member')}}
+                        <button class="btn btn-outline-secondary btn-sm mb-1" onclick="navigateWithTokenFetch('/team')">
+                            <i class="fas fa-users me-1"></i>Team
+                        </button>
+                        {{/unless}}
+                    </div>
+
+                    <!-- Balance Info - Compact -->
+                    <div class="balance-info mt-3 p-2 bg-light rounded">
+                        <small class="text-muted d-block mb-1">Current Balance</small>
+                        <h5 id="quickBalance" class="text-success mb-1">${{formatCurrency dashboardData.walletBalance}}</h5>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">Min: ${{minVerification}}</small>
+                            <small class="text-muted">{{dashboardData.verificationsCount}} verifications</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Summary Card -->
+            <div class="card modern-card compact-sidebar mt-3">
+                <div class="card-header modern-card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-chart-pie me-1"></i>Status Summary
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <div class="status-summary">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small">Pending</span>
+                            <span class="fw-semibold">{{dashboardData.pendingCount}}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small">Processing</span>
+                            <span class="fw-semibold">{{dashboardData.processingCount}}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small">Completed</span>
+                            <span class="fw-semibold">{{dashboardData.completedCount}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Card - Compact -->
+            <div class="card modern-card bg-gradient-primary text-white mt-3">
+                <div class="card-body p-2 text-center">
+                    <div class="support-icon mb-2">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h6 class="mb-2">Need Help?</h6>
+                    <button class="btn btn-light btn-sm w-100" onclick="navigateWithTokenFetch('/contact')">
+                        Contact Support
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Dashboard functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDashboard();
+});
+
+function initializeDashboard() {
+    // Add real-time updates if needed
+    setupRealTimeUpdates();
+    
+    // Add any client-side interactivity
+    setupEventListeners();
+    
+    // Initialize tooltips
+    document.querySelectorAll('[title]').forEach(function (element) {
+    new bootstrap.Tooltip(element);
+});
+}
+
+function setupRealTimeUpdates() {
+    // Example: Refresh data every 30 seconds
+    setInterval(() => {
+        refreshDashboardData();
+    }, 90000);
+}
+
+async function refreshDashboardData() {
+    try {
+        const response = await fetch('/dashboard', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            updateDashboardUI(data);
+        }
+    } catch (error) {
+        console.error('Error refreshing dashboard:', error);
+    }
+}
+
+function updateDashboardUI(data) {
+    // Update counts
+    document.getElementById('pendingCount').textContent = data.pendingCount;
+    document.getElementById('processingCount').textContent = data.processingCount;
+    document.getElementById('completedCount').textContent = data.completedCount;
+    
+    // Update balance
+    const formattedBalance = `$${data.walletBalance.toFixed(2)}`;
+    document.getElementById('walletBalanceCard').textContent = formattedBalance;
+    document.getElementById('quickBalance').textContent = formattedBalance;
+    
+    // Update balance status
+    updateBalanceStatus(data.walletBalance);
+}
+
+function updateBalanceStatus(balance) {
+    const statusElement = document.getElementById('balanceStatus');
+    if (balance < 5) {
+        statusElement.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Low balance</span>';
+    } else if (balance < 20) {
+        statusElement.innerHTML = '<span class="text-warning"><i class="fas fa-info-circle"></i> Balance OK</span>';
+    } else {
+        statusElement.innerHTML = '<span class="text-success"><i class="fas fa-check-circle"></i> Good balance</span>';
+    }
+}
+
+function filterVerifications(status) {
+    const rows = document.querySelectorAll('.verification-row');
+    rows.forEach(row => {
+        if (status === 'all' || row.getAttribute('data-status') === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function copyReference(reference) {
+    navigator.clipboard.writeText(reference).then(() => {
+        showToast('success', 'Reference copied to clipboard!');
+    });
+}
+
+function setupEventListeners() {
+    // Add any client-side interactivity here
+    console.log('Dashboard event listeners setup');
+}
+
+// Utility functions
+function formatCurrency(amount) {
+    return parseFloat(amount).toFixed(2);
+}
+
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString();
+}
+
+function formatDateShort(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+    });
+}
+
+function formatTime(dateString) {
+    return new Date(dateString).toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+}
+
+function truncate(text, length) {
+    if (text.length > length) {
+        return text.substring(0, length) + '...';
+    }
+    return text;
+}
+
+function formatStatus(status) {
+    const statusMap = {
+        'pending': 'Pending',
+        'pending_assignment': 'Awaiting Assignment',
+        'processing': 'Processing',
+        'requires_review': 'Requires Review',
+        'completed': 'Completed',
+        'failed': 'Failed'
+    };
+    return statusMap[status] || status;
+}
+
+function formatClassification(classification) {
+    const classificationMap = {
+        '1st': 'First Class',
+        '2:1': 'Upper Second',
+        '2:2': 'Lower Second',
+        '3rd': 'Third Class',
+        'pass': 'Pass',
+        'distinction': 'Distinction',
+        'merit': 'Merit'
+    };
+    return classificationMap[classification] || classification;
+}
+
+// Token management functions remain the same...
+function getToken() {
+    return localStorage.getItem('token') || sessionStorage.getItem('token');
+}
+
+function navigateWithToken(url) {
+    const token = getToken();
+    if (!token) {
+        console.error('No authentication token found');
+        showError('Authentication required. Please log in again.');
+        return;
+    }
+    window.location.href = `${url}?token=${encodeURIComponent(token)}`;
+}
+
+async function navigateWithTokenFetch(url) {
+    const token = getToken();
+    if (!token) {
+        console.error('No authentication token found');
+        showError('Authentication required. Please log in again.');
+        return;
+    }
+    window.location.href = `${url}?token=${encodeURIComponent(token)}`;
+}
+
+function viewVerification(verificationId) {
+    const token = getToken();
+    if (!token) {
+        showError('Authentication required. Please log in again.');
+        return;
+    }
+    navigateWithToken(`/verification/view-details/${verificationId}`);
+}
+
+function viewTransaction(transactionId) {
+    const token = getToken();
+    if (!token) {
+        showError('Authentication required. Please log in again.');
+        return;
+    }
+    navigateWithToken(`/transactions/view-details/${transactionId}`);
+}
+
+function showError(message) {
+    if (typeof showToast === 'function') {
+        showToast('error', message);
+    } else {
+        alert(message);
+    }
+}
+
+function showToast(type, message) {
+    // Simple toast implementation
+    const toast = document.createElement('div');
+    toast.className = `toast show position-fixed bottom-0 end-0 m-3 bg-${type === 'error' ? 'danger' : 'success'} text-white`;
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+</script>
+
+<style>
+.dashboard-page {
+    padding: 0;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.welcome-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+/* Main content area - wider */
+.col-lg-9 .modern-card,
+.col-xl-10 .modern-card {
+    margin-bottom: 1rem;
+}
+
+/* Compact sidebar */
+.compact-sidebar .card-header {
+    padding: 0.75rem 1rem !important;
+}
+
+.compact-sidebar .card-body {
+    padding: 1rem !important;
+}
+
+.compact-sidebar .btn {
+    font-size: 0.85rem;
+    padding: 0.375rem 0.5rem;
+}
+
+.modern-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.modern-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.modern-card-header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.stat-card.pending { border-left-color: #f59e0b; }
+.stat-card.processing { border-left-color: #3b82f6; }
+.stat-card.completed { border-left-color: #10b981; }
+.stat-card.revenue { border-left-color: #8b5cf6; }
+
+.stat-content {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+}
+
+.stat-card.pending .stat-icon { background: #fef3c7; color: #f59e0b; }
+.stat-card.processing .stat-icon { background: #dbeafe; color: #3b82f6; }
+.stat-card.completed .stat-icon { background: #d1fae5; color: #10b981; }
+.stat-card.revenue .stat-icon { background: #ede9fe; color: #8b5cf6; }
+
+.stat-info h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #1f2937;
+}
+
+.stat-info p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 0;
+}
+
+/* Table enhancements */
+.table-responsive {
+    font-size: 0.875rem;
+}
+
+#verificationsTable th {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+#verificationsTable td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+.verification-row:hover {
+    background-color: #f9fafb;
+}
+
+.institution-avatar img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.institution-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #3b82f6;
+    color: white;
+}
+
+.institution-info .fw-semibold {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.course-info .fw-medium {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.reference-cell .reference-number {
+    font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+    font-size: 0.8rem;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #374151;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-pending { background: #fef3c7; color: #f59e0b; }
+.status-processing { background: #dbeafe; color: #3b82f6; }
+.status-completed { background: #d1fae5; color: #10b981; }
+.status-failed { background: #fee2e2; color: #dc2626; }
+
+.priority-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.35rem;
+    border-radius: 3px;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+.priority-high { background: #fee2e2; color: #dc2626; }
+.priority-normal { background: #f3f4f6; color: #6b7280; }
+.priority-low { background: #ecfdf5; color: #059669; }
+
+.date-cell {
+    font-size: 0.8rem;
+}
+
+.fee-cell {
+    font-size: 0.9rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.action-buttons .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Transaction enhancements */
+.transaction-icon .icon-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transaction-item {
+    padding: 0.75rem 0;
+}
+
+.transaction-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Status summary */
+.status-summary .small {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+/* Support card */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.support-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.balance-info {
+    border-left: 3px solid #10b981;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .welcome-title {
+        font-size: 1.75rem;
+    }
+    
+    .welcome-header .d-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .header-actions {
+        margin-top: 1rem;
+    }
+    
+    .col-lg-9, .col-xl-10,
+    .col-lg-3, .col-xl-2 {
+        width: 100%;
+    }
+}
+</style>

@@ -1,0 +1,179 @@
+<svg width="500" height="350" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Elements -->
+    <circle cx="250" cy="175" r="160" fill="url(#pricingGradient)" opacity="0.05"/>
+    
+    <!-- Pricing Tiers -->
+    <g transform="translate(100, 120)">
+        <!-- Starter Tier -->
+        <g transform="translate(0, 0)">
+            <!-- Card -->
+            <rect x="0" y="0" width="90" height="120" rx="12" fill="white" stroke="#95a5a6" stroke-width="1.5"/>
+            
+            <!-- Header -->
+            <rect x="5" y="5" width="80" height="25" rx="6" fill="#95a5a6" opacity="0.8"/>
+            <text x="45" y="20" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">STARTER</text>
+            
+            <!-- Price -->
+            <text x="45" y="50" text-anchor="middle" fill="#2c3e50" font-family="Arial, sans-serif" font-size="16" font-weight="bold">$15</text>
+            <text x="45" y="65" text-anchor="middle" fill="#7f8c8d" font-family="Arial, sans-serif" font-size="8">per verification</text>
+            
+            <!-- Features -->
+            <g transform="translate(15, 75)">
+                <circle cx="0" cy="0" r="3" fill="#27ae60"/>
+                <text x="10" y="3" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">10/month</text>
+                
+                <circle cx="0" cy="12" r="3" fill="#27ae60"/>
+                <text x="10" y="15" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">3-5 days</text>
+                
+                <circle cx="0" cy="24" r="3" fill="#e74c3c" opacity="0.5"/>
+                <text x="10" y="27" fill="#95a5a6" font-family="Arial, sans-serif" font-size="8">No bulk</text>
+            </g>
+        </g>
+        
+        <!-- Professional Tier (Featured) -->
+        <g transform="translate(105, -20)">
+            <!-- Card with shadow -->
+            <rect x="0" y="0" width="110" height="140" rx="12" fill="white" stroke="#3498db" stroke-width="2.5"/>
+            <rect x="2" y="2" width="106" height="136" rx="10" fill="url(#professionalGradient)" opacity="0.1"/>
+            
+            <!-- Featured Badge -->
+            <rect x="25" y="-15" width="60" height="20" rx="10" fill="#f39c12"/>
+            <text x="55" y="-3" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="8" font-weight="bold">POPULAR</text>
+            
+            <!-- Header -->
+            <rect x="5" y="5" width="100" height="30" rx="6" fill="#3498db"/>
+            <text x="55" y="22" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">PRO</text>
+            
+            <!-- Price -->
+            <text x="55" y="55" text-anchor="middle" fill="#2c3e50" font-family="Arial, sans-serif" font-size="20" font-weight="bold">$12</text>
+            <text x="55" y="70" text-anchor="middle" fill="#7f8c8d" font-family="Arial, sans-serif" font-size="9">per verification</text>
+            
+            <!-- Features -->
+            <g transform="translate(20, 80)">
+                <circle cx="0" cy="0" r="3" fill="#27ae60"/>
+                <text x="10" y="3" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">50/month</text>
+                
+                <circle cx="0" cy="12" r="3" fill="#27ae60"/>
+                <text x="10" y="15" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">24-48 hours</text>
+                
+                <circle cx="0" cy="24" r="3" fill="#27ae60"/>
+                <text x="10" y="27" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">Bulk: 100</text>
+                
+                <circle cx="0" cy="36" r="3" fill="#e74c3c" opacity="0.5"/>
+                <text x="10" y="39" fill="#95a5a6" font-family="Arial, sans-serif" font-size="8">No API</text>
+            </g>
+        </g>
+        
+        <!-- Enterprise Tier -->
+        <g transform="translate(230, 0)">
+            <!-- Card -->
+            <rect x="0" y="0" width="100" height="120" rx="12" fill="white" stroke="#9b59b6" stroke-width="1.5"/>
+            
+            <!-- Header -->
+            <rect x="5" y="5" width="90" height="25" rx="6" fill="#9b59b6" opacity="0.8"/>
+            <text x="50" y="20" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">ENTERPRISE</text>
+            
+            <!-- Price -->
+            <text x="50" y="50" text-anchor="middle" fill="#2c3e50" font-family="Arial, sans-serif" font-size="16" font-weight="bold">$8</text>
+            <text x="50" y="65" text-anchor="middle" fill="#7f8c8d" font-family="Arial, sans-serif" font-size="8">volume pricing</text>
+            
+            <!-- Features -->
+            <g transform="translate(15, 75)">
+                <circle cx="0" cy="0" r="3" fill="#27ae60"/>
+                <text x="10" y="3" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">Unlimited</text>
+                
+                <circle cx="0" cy="12" r="3" fill="#27ae60"/>
+                <text x="10" y="15" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">Same day</text>
+                
+                <circle cx="0" cy="24" r="3" fill="#27ae60"/>
+                <text x="10" y="27" fill="#2c3e50" font-family="Arial, sans-serif" font-size="8">Full API</text>
+            </g>
+        </g>
+    </g>
+    
+    <!-- Money Bag Icon -->
+    <g transform="translate(400, 80)">
+        <!-- Bag -->
+        <path d="M0,40 C0,20 20,0 40,0 C60,0 80,20 80,40 C80,50 70,60 60,70 L20,70 C10,60 0,50 0,40 Z" fill="#27ae60" opacity="0.8"/>
+        
+        <!-- Top fold -->
+        <path d="M10,40 C10,25 25,15 40,15 C55,15 70,25 70,40" stroke="#2ecc71" stroke-width="2" fill="none"/>
+        
+        <!-- Dollar Sign -->
+        <text x="40" y="45" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="bold">$</text>
+        
+        <!-- Shine -->
+        <circle cx="55" cy="25" r="8" fill="white" opacity="0.3"/>
+    </g>
+    
+    <!-- Verification Icons -->
+    <g transform="translate(50, 80)">
+        <!-- Document Stack -->
+        <rect x="0" y="0" width="35" height="45" rx="4" fill="#3498db" opacity="0.7"/>
+        <rect x="3" y="3" width="29" height="39" rx="2" fill="#2980b9" opacity="0.8"/>
+        <rect x="6" y="6" width="23" height="33" rx="1" fill="#3498db"/>
+        
+        <!-- Checkmarks on documents -->
+        <g transform="translate(15, 20)">
+            <path d="M0,0 L3,3 L8,-2" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </g>
+        <g transform="translate(15, 30)">
+            <path d="M0,0 L3,3 L8,-2" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </g>
+    </g>
+    
+    <!-- Speedometer -->
+    <g transform="translate(400, 250)">
+        <!-- Gauge -->
+        <circle cx="0" cy="0" r="30" fill="none" stroke="#e74c3c" stroke-width="3"/>
+        <path d="M0,0 L0,-30" stroke="#e74c3c" stroke-width="2" transform="rotate(45)"/>
+        <path d="M0,0 L0,-30" stroke="#e74c3c" stroke-width="2" transform="rotate(-45)"/>
+        
+        <!-- Needle -->
+        <path d="M0,5 L0,-25" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" transform="rotate(30)"/>
+        
+        <!-- Center -->
+        <circle cx="0" cy="0" r="5" fill="#e74c3c"/>
+    </g>
+    
+    <!-- Floating Elements -->
+    <g transform="translate(80, 250)">
+        <!-- Clock Icon -->
+        <circle cx="0" cy="0" r="15" fill="none" stroke="#f39c12" stroke-width="2"/>
+        <circle cx="0" cy="0" r="2" fill="#f39c12"/>
+        <path d="M0,0 L0,-8" stroke="#f39c12" stroke-width="2" stroke-linecap="round"/>
+        <path d="M0,0 L6,0" stroke="#f39c12" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+    
+    <g transform="translate(450, 150)">
+        <!-- Shield Icon -->
+        <path d="M0,15 L10,0 L20,15 L20,25 C20,30 10,32 10,32 C10,32 0,30 0,25 Z" fill="#3498db" opacity="0.7"/>
+        <path d="M10,18 L13,21 L17,17" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+    
+    <!-- Connection Arrows -->
+    <g transform="translate(200, 180)">
+        <!-- Arrow from Starter to Pro -->
+        <path d="M0,0 L40,0" stroke="#95a5a6" stroke-width="2" stroke-dasharray="3 2" fill="none" marker-end="url(#arrowhead)"/>
+        
+        <!-- Arrow from Pro to Enterprise -->
+        <path d="M0,0 L40,0" stroke="#3498db" stroke-width="2" stroke-dasharray="3 2" fill="none" marker-end="url(#arrowhead)"/>
+    </g>
+    
+    <!-- Gradients and Markers -->
+    <defs>
+        <linearGradient id="pricingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#667eea"/>
+            <stop offset="100%" stop-color="#764ba2"/>
+        </linearGradient>
+        
+        <linearGradient id="professionalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3498db"/>
+            <stop offset="100%" stop-color="#2980b9"/>
+        </linearGradient>
+        
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#3498db"/>
+        </marker>
+    </defs>
+</svg>

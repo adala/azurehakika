@@ -1,0 +1,59 @@
+<div class="error-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="error-content">
+                    <div class="error-icon mb-4">
+                        <i class="fas fa-exclamation-triangle fa-5x text-warning"></i>
+                    </div>
+                    <h1 class="display-1 fw-bold text-warning">400</h1>
+                    <h2 class="h3 mb-4">Bad Request</h2>
+                    <p class="lead mb-4">
+                        The server cannot process the request due to something that is perceived to be a client error.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Go Back
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .error-icon {
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+            transform: translateY(0);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        60% {
+            transform: translateY(-5px);
+        }
+    }
+</style>

@@ -1,0 +1,405 @@
+<div class="institutions-search-page">
+    <!-- Hero Section -->
+    <section class="hero-section bg-gradient-primary text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-4">Select Your Institution</h1>
+                    <p class="lead mb-4">
+                        Search for your educational institution to begin the verification process.
+                        Select your institution from the search results to continue.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <h3 class="h4 mb-4 text-center">Find Your Institution</h3>
+
+                            <!-- Search Form -->
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label fw-semibold">Search Institution</label>
+                                    <div class="search-input-wrapper">
+                                        <input type="text" class="form-control form-control-lg" id="institutionSearch"
+                                            placeholder="Enter institution name..." autocomplete="off">
+                                        <div class="search-suggestions" id="searchSuggestions"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Filter by Country</label>
+                                    <select class="form-select form-select-lg" id="countryFilter">
+                                        <option value="">All Countries</option>
+                                        {{#each countries}}
+                                        <option value="{{this.name}}">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-primary btn-lg w-100 h-100" id="searchButton" type="button">
+                                        <i class="fas fa-search me-2"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Results -->
+    <section class="results-section py-4" id="searchResults" style="display: none;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Search Results
+                                <span class="badge bg-primary ms-2" id="resultsCount">0</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="institutionsList" class="row">
+                                <!-- Institutions will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Institutions -->
+    <section class="popular-institutions py-5 bg-light">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <h2 class="section-title">Popular Institutions</h2>
+                    <p class="section-subtitle">Quickly select from commonly verified institutions</p>
+                </div>
+            </div>
+            <div class="row" id="popularInstitutions">
+                <!-- Popular institutions will be loaded here -->
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .institutions-search-page {
+        background: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .search-input-wrapper {
+        position: relative;
+    }
+
+    .search-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-top: none;
+        border-radius: 0 0 0.375rem 0.375rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .search-suggestion-item {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f8f9fa;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .search-suggestion-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .search-suggestion-item:last-child {
+        border-bottom: none;
+    }
+
+    .suggestion-name {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .suggestion-location {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .institution-card {
+        border: none;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .institution-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .institution-logo {
+        height: 40px;
+        width: auto;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: #6c757d;
+    }
+
+    .select-institution-btn {
+        width: 100%;
+    }
+
+    .institution-meta {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .verification-badge {
+        font-size: 0.75rem;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const searchInput = document.getElementById('institutionSearch');
+        const countryFilter = document.getElementById('countryFilter');
+        const searchButton = document.getElementById('searchButton');
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        const searchResults = document.getElementById('searchResults');
+        const institutionsList = document.getElementById('institutionsList');
+        const popularInstitutions = document.getElementById('popularInstitutions');
+        const resultsCount = document.getElementById('resultsCount');
+
+        let allInstitutions = [];
+
+        // Load institutions and popular institutions
+        loadInstitutions();
+        loadPopularInstitutions();
+
+        // Search functionality
+        searchInput.addEventListener('input', debounce(handleSearch, 300));
+        searchButton.addEventListener('click', performSearch);
+        countryFilter.addEventListener('change', performSearch);
+
+        async function loadInstitutions() {
+            try {
+                const response = await fetch('/api/institutions');
+                const data = await response.json();
+                if (data.success) {
+                    allInstitutions = data.institutions;
+                }
+            } catch (error) {
+                console.error('Error loading institutions:', error);
+            }
+        }
+
+        async function loadPopularInstitutions() {
+            try {
+                const response = await fetch('/api/institutions/popular');
+                const data = await response.json();
+                if (data.success) {
+                    displayPopularInstitutions(data.institutions);
+                }
+            } catch (error) {
+                console.error('Error loading popular institutions:', error);
+            }
+        }
+
+        function displayPopularInstitutions(institutions) {
+            popularInstitutions.innerHTML = institutions.map(inst => `
+            <div class="col-md-4 mb-4">
+                <div class="card institution-card h-100" data-institution-id="${inst.id}">
+                    <div class="card-body text-center">
+                        {{{safeLogo inst.logo inst.name}}}
+                        <h5 class="card-title">${inst.name}</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>${inst.country}
+                        </p>
+                        <p class="institution-meta">${inst.type}</p>
+                        <button class="btn btn-primary select-institution-btn" onclick="selectInstitution('${inst.id}')">
+                            <i class="fas fa-check me-2"></i>Select Institution
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        function handleSearch() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+
+            if (searchTerm.length < 2) {
+                searchSuggestions.style.display = 'none';
+                return;
+            }
+
+            const filtered = allInstitutions.filter(inst => {
+                return inst.name.toLowerCase().includes(searchTerm) ||
+                    inst.country.toLowerCase().includes(searchTerm) ||
+                    inst.type.toLowerCase().includes(searchTerm);
+            });
+
+            displaySuggestions(filtered.slice(0, 8));
+        }
+
+        function displaySuggestions(institutions) {
+            if (institutions.length === 0) {
+                searchSuggestions.innerHTML = `
+                <div class="search-suggestion-item text-muted">
+                    No institutions found. Try different search terms.
+                </div>
+            `;
+            } else {
+                searchSuggestions.innerHTML = institutions.map(inst => `
+                <div class="search-suggestion-item" data-institution-id="${inst.id}">
+                    <div class="suggestion-name">${inst.name}</div>
+                    <div class="suggestion-location">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        ${inst.country} • ${inst.type}
+                    </div>
+                </div>
+            `).join('');
+            }
+
+            searchSuggestions.style.display = 'block';
+
+            // Add click handlers to suggestions
+            document.querySelectorAll('.search-suggestion-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    const institutionId = this.getAttribute('data-institution-id');
+                    const institution = allInstitutions.find(inst => inst.id === institutionId);
+                    if (institution) {
+                        searchInput.value = institution.name;
+                        searchSuggestions.style.display = 'none';
+                        performSearch();
+                    }
+                });
+            });
+        }
+
+        function performSearch() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            const country = countryFilter.value;
+
+            const filtered = allInstitutions.filter(inst => {
+                const matchesSearch = !searchTerm ||
+                    inst.name.toLowerCase().includes(searchTerm) ||
+                    inst.country.toLowerCase().includes(searchTerm) ||
+                    inst.type.toLowerCase().includes(searchTerm);
+                const matchesCountry = !country || inst.name === country;
+                return matchesSearch && matchesCountry;
+            });
+
+            displaySearchResults(filtered);
+        }
+
+        function displaySearchResults(institutions) {
+            if (institutions.length === 0) {
+                institutionsList.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4>No institutions found</h4>
+                    <p class="text-muted">Try adjusting your search terms or country filter</p>
+                </div>
+            `;
+            } else {
+                institutionsList.innerHTML = institutions.map(inst => `
+                <div class="col-md-6 mb-4">
+                    <div class="card institution-card h-100">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="card-title">${inst.name}</h5>
+                                    <p class="card-text text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-1"></i>${inst.country}
+                                    </p>
+                                    <p class="institution-meta mb-2">${inst.type}</p>
+                                    ${inst.processingTime ? `
+                                        <span class="badge bg-info verification-badge">
+                                            <i class="fas fa-clock me-1"></i>${inst.processingTime}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-primary select-institution-btn" 
+                                            onclick="selectInstitution('${inst.id}')">
+                                        <i class="fas fa-check me-2"></i>Select
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            }
+
+            resultsCount.textContent = institutions.length;
+            searchResults.style.display = 'block';
+
+            // Scroll to results
+            searchResults.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                searchSuggestions.style.display = 'none';
+            }
+        });
+
+        // Debounce function for search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    });
+
+    // Global function to select institution and redirect to verification form
+    function selectInstitution(institutionId) {
+        // Redirect to verification form with institution ID
+        window.location.href = `/verification/start?institutionId=${institutionId}`;
+    }
+</script>
